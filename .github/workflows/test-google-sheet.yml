@@ -44,7 +44,7 @@ jobs:
       - name: Build LCA database
         if: steps.db-cache.outputs.cache-hit != 'true'
         run: |
-          python sponsorscan.py load-lca "LCA_Disclosure_Data_FY2026_Q2.xlsx" --replace
+          python sponsorscan.py load-lca "LCA_Dislclosure_Data_FY2026_Q2.xlsx" --replace
 
       - name: Fetch current jobs
         run: |
