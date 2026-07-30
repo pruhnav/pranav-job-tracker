@@ -61,7 +61,9 @@ def create_missing_sheets(
             "addSheet": {
                 "properties": {
                     "title": sheet_name,
-                    "frozenRowCount": 1,
+                    "gridProperties": {
+                        "frozenRowCount": 1
+                    },
                 }
             }
         }
