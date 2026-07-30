@@ -1,6 +1,9 @@
 name: Run SponsorScan
 
 on:
+  schedule:
+    # Hourly from 6:00 AM through midnight Pacific during daylight saving time
+    - cron: '0 13-23,0-7 * * *'
   workflow_dispatch:
 
 permissions:
