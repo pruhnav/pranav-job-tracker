@@ -43,7 +43,7 @@ def main() -> None:
         range="Sheet1!A1:B2",
         valueInputOption="RAW",
         body={"values": values},
-    ).execute()
+    ).execute(num_retries=5)
 
     print("Google Sheet updated successfully.")
 
