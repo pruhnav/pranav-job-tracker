@@ -37,9 +37,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download lca-fy2026-q2 \
-            --pattern "LCA_Disclosure_Data_FY2026_Q2.xlsx" \
-            --output "LCA_Disclosure_Data_FY2026_Q2.xlsx"
+          gh release download lca-fy2026-q2 --dir .
+          echo "Downloaded files:"
+          ls -lah
 
       - name: Build LCA database
         if: steps.db-cache.outputs.cache-hit != 'true'
