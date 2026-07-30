@@ -61,6 +61,22 @@ jobs:
             --new-out todays_new_jobs_48h.csv \
             --top 50
 
+      - name: Update Google Sheet
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_SPREADSHEET_ID: ${{ secrets.GOOGLE_SPREADSHEET_ID }}
+        run: |
+          python test_google_sheet.py
+
+      - name: Email new job matches
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFICATION_EMAIL: ${{ secrets.NOTIFICATION_EMAIL }}
+        run: |
+          python send_job_email.py
+
+
       - name: Upload report CSV files
         uses: actions/upload-artifact@v4
         with:
