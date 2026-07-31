@@ -105,17 +105,19 @@ RESUME_SKILLS = [
     for name, pats, score in RESUME_SKILLS
 ]
 
-# -------------------------- Career-level fit ---------------------------
+# -------------------------- Hard eligibility ---------------------------
+
+# Phase 1: reject jobs that are clearly outside the user's eligibility.
+# Only jobs that survive this phase are allowed to reach scoring.
 
 POSITIVE_LEVEL_PATTERNS = [
     ("new grad", re.compile(r"\bnew ?grad(?:uate)?\b", re.I), 18),
     ("university graduate", re.compile(r"\b(?:university|college) grad(?:uate)?\b", re.I), 16),
     ("early career", re.compile(r"\bearly career\b", re.I), 14),
     ("entry level", re.compile(r"\bentry[ -]?level\b", re.I), 14),
-    ("0–2 years", re.compile(r"\b0\s*(?:-|–|to)\s*2\s*(?:years?|yrs?)\b", re.I), 14),
-    ("0–1 years", re.compile(r"\b0\s*(?:-|–|to)\s*1\s*(?:years?|yrs?)\b", re.I), 14),
-    ("1–2 years", re.compile(r"\b1\s*(?:-|–|to)\s*2\s*(?:years?|yrs?)\b", re.I), 11),
-    ("1–3 years", re.compile(r"\b1\s*(?:-|–|to)\s*3\s*(?:years?|yrs?)\b", re.I), 8),
+    ("0–2 years", re.compile(r"\b0\s*(?:-|–|—|to)\s*2\s*(?:years?|yrs?)\b", re.I), 14),
+    ("0–1 years", re.compile(r"\b0\s*(?:-|–|—|to)\s*1\s*(?:years?|yrs?)\b", re.I), 14),
+    ("1–2 years", re.compile(r"\b1\s*(?:-|–|—|to)\s*2\s*(?:years?|yrs?)\b", re.I), 11),
     ("associate", re.compile(r"\bassociate\b", re.I), 7),
     ("level I", re.compile(r"\b(?:engineer|scientist|developer)\s+i\b", re.I), 8),
     ("internship", re.compile(r"\bintern(?:ship)?\b", re.I), 8),
@@ -123,8 +125,9 @@ POSITIVE_LEVEL_PATTERNS = [
 ]
 
 SENIOR_TITLE = re.compile(
-    r"\b(senior|sr\.?|staff|principal|distinguished|lead|architect|manager|"
-    r"director|head of|vp|vice president|chief|fellow)\b", re.I
+    r"\b(?:senior|sr\.?|staff|principal|distinguished|lead|architect|manager|"
+    r"director|head of|vp|vice president|chief|fellow)\b",
+    re.I,
 )
 
 PHD_TITLE = re.compile(
@@ -134,48 +137,34 @@ PHD_TITLE = re.compile(
 
 LEVEL_II_PLUS_TITLE = re.compile(
     r"(?:"
-    # Roman numerals
-    r"\b(?:engineer|scientist|developer|analyst|researcher|software engineer|machine learning engineer|data scientist)\s*(?:,|-)?\s*(?:ii|iii|iv|v)\b"
-    # Numeric levels (Engineer 2, Software Engineer 3, etc.)
-    r"|\b(?:engineer|scientist|developer|analyst|researcher|software engineer|machine learning engineer|data scientist)\s*(?:,|-)?\s*(?:2|3|4|5)\b"
-    # Generic level labels
+    r"\b(?:engineer|scientist|developer|analyst|researcher)\s*(?:,|-)?\s*(?:ii|iii|iv|v|2|3|4|5)\b"
     r"|\b(?:level|lvl)\s*(?:2|3|4|5|ii|iii|iv|v)\b"
-    # SWE/SDE abbreviations
     r"|\b(?:swe|sde|mle)\s*(?:2|3|4|5|ii|iii|iv|v)\b"
     r")",
     re.I,
 )
 
-HARD_EXCLUDE_PATTERNS = [
-    (
-        "PhD mentioned in description",
-        re.compile(
-            r"\b(?:ph\.?\s*d\.?|doctorate|doctoral degree|doctoral)\b",
-            re.I,
-        ),
-    ),
-    (
-        "Master's mentioned in description",
-        re.compile(
-            r"\b(?:master'?s(?:\s+degree)?|m\.?\s*s\.?|m\.?\s*sc\.?|graduate degree)\b",
-            re.I,
-        ),
-    ),
-    (
-        "postdoctoral/faculty role",
-        re.compile(r"\b(?:postdoctoral|post-doc|postdoc|faculty|professor)\b", re.I),
-    ),
-]
+# Intentionally strict: reject any Master's or PhD mention in the description.
+# This follows the user's latest preference to avoid advanced-degree roles.
+ADVANCED_DEGREE_RE = re.compile(
+    r"\b(?:ph\.?\s*d\.?|doctorate|doctoral(?: degree)?|"
+    r"master'?s(?: degree)?|m\.?\s*s\.?|m\.?\s*sc\.?|graduate degree)\b",
+    re.I,
+)
 
-# Detect requirements such as:
-#   "10+ years of overall experience"
-#   "2+ years of production experience developing..."
-#   "6+ years of deep experience architecting..."
-#   "3 years' software engineering experience"
-#   "1-2 years of relevant professional experience"
+POSTDOC_FACULTY_RE = re.compile(
+    r"\b(?:postdoctoral|post-doc|postdoc|faculty|professor)\b",
+    re.I,
+)
+
+# Aggressive experience parser. It catches:
+#   2 years
+#   2+ years
+#   2-5 years
+#   5 years building systems
+#   7+ years of software and AI engineering related experience
 #
-# Up to six descriptive words are allowed before "experience", which catches
-# common wording without treating unrelated year numbers as experience rules.
+# A lower bound of 0 or 1 remains allowed. Anything above 1 is rejected.
 EXPERIENCE_REQUIREMENT_RE = re.compile(
     r"\b(?P<min>\d{1,2})\s*"
     r"(?:\+|(?:-|–|—|to)\s*(?P<max>\d{1,2}))?\s*"
@@ -193,28 +182,19 @@ EXPERIENCE_REQUIREMENT_RE = re.compile(
 # blocks OPT candidates, requires permanent/unrestricted authorization, limits
 # the role to citizens/permanent residents, or requires clearance/export status.
 DISQUALIFIERS = [
-    # Explicitly refuses candidates who need sponsorship now OR later.
-    r"\b(?:cannot|can't|will not|won't|unable to|do not|does not|not able to)\b"
-    r"[^.\n]{0,100}\b(?:sponsor|provide sponsorship)\b[^.\n]{0,100}"
-    r"\b(?:now\s*(?:or|and)\s*(?:in the )?future|currently\s*(?:or|and)\s*(?:in the )?future)\b",
-    r"\b(?:no|without)\b[^.\n]{0,80}\b(?:current or future|now or future)\b"
-    r"[^.\n]{0,80}\b(?:visa|immigration|employment)\s+sponsorship\b",
-    r"\b(?:must|need to)\b[^.\n]{0,80}\b(?:not require|never require)\b"
-    r"[^.\n]{0,80}\bsponsorship\b",
-    r"\bcandidates?\s+(?:requiring|who require)\b[^.\n]{0,80}"
-    r"\b(?:now or in the future|current or future)\b[^.\n]{0,80}\b(?:are not eligible|will not be considered)\b",
+    # Explicit OPT/CPT exclusion.
+    r"\b(?:opt|stem opt|cpt)\b[^.\n]{0,100}"
+    r"\b(?:not accepted|not eligible|not supported|will not be considered|cannot be hired)\b",
+    r"\b(?:not accepting|cannot employ|unable to employ)\b[^.\n]{0,100}"
+    r"\b(?:opt|stem opt|cpt)\b",
 
-    # Explicitly excludes OPT/CPT or temporary employment authorization.
-    r"\b(?:opt|stem opt|cpt)\b[^.\n]{0,80}\b(?:not accepted|not eligible|not supported|will not be considered)\b",
-    r"\b(?:not accepting|cannot employ|unable to employ)\b[^.\n]{0,80}\b(?:opt|stem opt|cpt)\b",
-
-    # Requires permanent or unrestricted work authorization.
+    # Requires permanent or unrestricted authorization.
     r"\b(?:permanent|unrestricted)\s+(?:u\.?\s?s\.?\s+)?work authorization\b",
-    r"\bauthorized to work\b[^.\n]{0,100}\bwithout\b[^.\n]{0,60}"
-    r"\b(?:current or future|now or future)\b[^.\n]{0,60}\bsponsorship\b",
-    r"\bmust be\b[^.\n]{0,80}\b(?:permanent resident|green card holder)\b",
+    r"\bmust be\b[^.\n]{0,100}\b(?:permanent resident|green card holder)\b",
+    r"\b(?:must|need to)\b[^.\n]{0,100}\b(?:not require|never require)\b"
+    r"[^.\n]{0,100}\b(?:current or future|now or future)\b[^.\n]{0,60}\bsponsorship\b",
 
-    # Citizenship and regulated-access restrictions.
+    # Citizenship, clearance, and regulated-access restrictions.
     r"\bmust be (?:a |an )?(?:u\.?\s?s\.?|united states)\s?(?:citizen|person|national)\b",
     r"\b(?:u\.?\s?s\.?|united states)\s?citizenship (?:is )?required\b",
     r"\b(?:u\.?\s?s\.?|united states)\s?(?:citizens?|persons?)\s+only\b",
@@ -329,9 +309,11 @@ def score_skills(title, description):
 
 def career_level_score(title, description):
     title_text = title or ""
-    text = f"{title_text}\n{description or ''}"
+    description_text = description or ""
+    text = f"{title_text}\n{description_text}"
 
-    # Strict title exclusions happen first.
+    # ---------------- Phase 1: hard eligibility ----------------
+
     if PHD_TITLE.search(title_text):
         return None, "PhD/doctoral/postdoc title", [], None
 
@@ -341,33 +323,42 @@ def career_level_score(title, description):
     if SENIOR_TITLE.search(title_text):
         return None, "senior-level title", [], None
 
-    for reason, pattern in HARD_EXCLUDE_PATTERNS:
-        if pattern.search(text):
-            return None, reason, [], None
+    if POSTDOC_FACULTY_RE.search(text):
+        return None, "postdoctoral/faculty role", [], None
+
+    if ADVANCED_DEGREE_RE.search(description_text):
+        matched = ADVANCED_DEGREE_RE.search(description_text).group(0)
+        if re.search(r"ph\.?\s*d\.?|doctorate|doctoral", matched, re.I):
+            return None, "PhD mentioned in description", [], None
+        return None, "Master's mentioned in description", [], None
+
+    experience_matches = list(EXPERIENCE_REQUIREMENT_RE.finditer(description_text))
+    requirements = [
+        (
+            int(match.group("min")),
+            int(match.group("max")) if match.group("max") else None,
+        )
+        for match in experience_matches
+    ]
+
+    # Use every detected years phrase, not the smallest one.
+    # Therefore "1 year in Python and 5+ years overall" is rejected.
+    disqualifying = [minimum for minimum, _ in requirements if minimum > 1]
+    if disqualifying:
+        required = max(disqualifying)
+        return None, f"{required}+ years required", [], required
+
+    years_required = max((minimum for minimum, _ in requirements), default=None)
+
+    # ---------------- Phase 2: entry-level scoring ----------------
 
     signals = []
     bonus = 0
+
     for label, pattern, points in POSITIVE_LEVEL_PATTERNS:
         if pattern.search(text):
             signals.append(label)
             bonus = max(bonus, points)
-
-    requirements = []
-    for match in EXPERIENCE_REQUIREMENT_RE.finditer(text):
-        minimum = int(match.group("min"))
-        maximum = int(match.group("max")) if match.group("max") else None
-        requirements.append((minimum, maximum))
-
-    minimums = [item[0] for item in requirements]
-    years_required = max(minimums, default=None)
-
-    # Aggressive entry-level rule: reject when ANY years phrase has a lower
-    # bound above 1. Examples rejected: 2 years, 2-5 years, 5+ years,
-    # 7 years building systems. A true 1-year minimum remains allowed.
-    disqualifying = [minimum for minimum in minimums if minimum > 1]
-    if disqualifying:
-        required = max(disqualifying)
-        return None, f"{required}+ years required", signals, required
 
     if years_required == 0:
         bonus += 10
