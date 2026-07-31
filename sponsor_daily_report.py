@@ -148,28 +148,16 @@ LEVEL_II_PLUS_TITLE = re.compile(
 
 HARD_EXCLUDE_PATTERNS = [
     (
-        "PhD required in description",
+        "PhD mentioned in description",
         re.compile(
-            r"(?:"
-            r"\b(?:must|requires?|required|need(?:ed)?|minimum qualification(?:s)?|basic qualification(?:s)?)\b"
-            r"[^.\n]{0,120}\b(?:ph\.?\s*d\.?|doctorate|doctoral degree)\b"
-            r"|\b(?:ph\.?\s*d\.?|doctorate|doctoral degree)\b"
-            r"[^.\n]{0,80}\b(?:required|must have|is required|minimum)\b"
-            r"|\byou (?:hold|have)\b[^.\n]{0,40}\b(?:a\s+)?(?:ph\.?\s*d\.?|doctorate|doctoral degree)\b"
-            r")",
+            r"\b(?:ph\.?\s*d\.?|doctorate|doctoral degree|doctoral)\b",
             re.I,
         ),
     ),
     (
-        "Master's required in description",
+        "Master's mentioned in description",
         re.compile(
-            r"(?:"
-            r"\b(?:must|requires?|required|need(?:ed)?|minimum qualification(?:s)?|basic qualification(?:s)?)\b"
-            r"[^.\n]{0,120}\b(?:master'?s degree|m\.?\s*s\.?|m\.?\s*sc\.?|graduate degree)\b"
-            r"|\b(?:master'?s degree|m\.?\s*s\.?|m\.?\s*sc\.?|graduate degree)\b"
-            r"[^.\n]{0,80}\b(?:required|must have|is required|minimum)\b"
-            r"|\byou (?:hold|have)\b[^.\n]{0,40}\b(?:a\s+)?(?:master'?s degree|m\.?\s*s\.?|m\.?\s*sc\.?|graduate degree)\b"
-            r")",
+            r"\b(?:master'?s(?:\s+degree)?|m\.?\s*s\.?|m\.?\s*sc\.?|graduate degree)\b",
             re.I,
         ),
     ),
@@ -191,10 +179,7 @@ HARD_EXCLUDE_PATTERNS = [
 EXPERIENCE_REQUIREMENT_RE = re.compile(
     r"\b(?P<min>\d{1,2})\s*"
     r"(?:\+|(?:-|–|—|to)\s*(?P<max>\d{1,2}))?\s*"
-    r"(?:years?|yrs?)"
-    r"(?:\s*(?:of|['’]s?))?\s+"
-    r"(?:[a-z][a-z0-9+/#.&-]*\s+){0,6}?"
-    r"experience\b",
+    r"(?:years?|yrs?)\b",
     re.I,
 )
 
@@ -373,12 +358,16 @@ def career_level_score(title, description):
         maximum = int(match.group("max")) if match.group("max") else None
         requirements.append((minimum, maximum))
 
-    years_required = min((item[0] for item in requirements), default=None)
+    minimums = [item[0] for item in requirements]
+    years_required = max(minimums, default=None)
 
-    # Reject postings whose minimum requirement is 2 years or more.
-    # 0-2 and 1-2 remain allowed because their minimum is below 2.
-    if years_required is not None and years_required >= 2:
-        return None, f"{years_required}+ years required", signals, years_required
+    # Aggressive entry-level rule: reject when ANY years phrase has a lower
+    # bound above 1. Examples rejected: 2 years, 2-5 years, 5+ years,
+    # 7 years building systems. A true 1-year minimum remains allowed.
+    disqualifying = [minimum for minimum in minimums if minimum > 1]
+    if disqualifying:
+        required = max(disqualifying)
+        return None, f"{required}+ years required", signals, required
 
     if years_required == 0:
         bonus += 10
@@ -656,9 +645,9 @@ def main():
                 counts["level_title"] += 1
             elif exclusion_reason and exclusion_reason.endswith("+ years required"):
                 counts["experience_2plus"] += 1
-            elif exclusion_reason == "PhD required in description":
+            elif exclusion_reason == "PhD mentioned in description":
                 counts["phd_required"] += 1
-            elif exclusion_reason == "Master's required in description":
+            elif exclusion_reason == "Master's mentioned in description":
                 counts["masters_required"] += 1
             continue
 
@@ -765,9 +754,9 @@ def main():
     print(f"{counts['career']:,} dropped for career-level restrictions")
     print(f"  - {counts['phd_title']:,} had PhD/doctoral/postdoc in the title")
     print(f"  - {counts['level_title']:,} had Level II/III/IV/V titles")
-    print(f"  - {counts['experience_2plus']:,} required a minimum of 2+ years")
-    print(f"  - {counts['phd_required']:,} required a PhD in the description")
-    print(f"  - {counts['masters_required']:,} required a master's degree in the description")
+    print(f"  - {counts['experience_2plus']:,} required more than 1 year of experience")
+    print(f"  - {counts['phd_required']:,} mentioned a PhD in the description")
+    print(f"  - {counts['masters_required']:,} mentioned a master's degree in the description")
     print(f"{counts['role']:,} dropped outside your target role list")
     print(f"{counts['location']:,} dropped as non-US or unrecognized")
     print(f"{counts['score']:,} dropped below combined score {args.min_score}")
