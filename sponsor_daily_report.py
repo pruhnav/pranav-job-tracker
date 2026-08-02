@@ -560,7 +560,7 @@ def main():
                         help="Snapshot file used to identify new jobs")
     parser.add_argument("--top", type=int, default=50,
                         help="How many top jobs to print")
-    parser.add_argument("--min-score", type=int, default=95,
+    parser.add_argument("--min-score", type=int, default=85,
                         help="Minimum combined score to keep")
     parser.add_argument("--include-non-us", action="store_true")
     parser.add_argument("--include-internships", action="store_true",
