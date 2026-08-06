@@ -1,14 +1,16 @@
 {
-  "generated_at_utc": "2026-08-06T06:38:21.345555+00:00",
+  "generated_at_utc": "2026-08-06T09:45:06.952583+00:00",
   "active_job_keys": [
-    "https://careers.roblox.com/jobs/8025021",
-    "https://careers.roblox.com/jobs/8047815",
-    "https://careers.roblox.com/jobs/8080438",
-    "https://careers.withwaymo.com/jobs",
-    "https://job-boards.greenhouse.io/torcrobotics/jobs/8676173002",
-    "https://job-boards.greenhouse.io/xai/jobs/4956028007",
-    "https://job-boards.greenhouse.io/xai/jobs/5051966007",
-    "https://job-boards.greenhouse.io/xai/jobs/5125621007",
-    "https://www.weareroku.com/jobs/7527300"
+    "greenhouse:roblox:8025021",
+    "greenhouse:roblox:8047815",
+    "greenhouse:roblox:8080438",
+    "greenhouse:roku:7527300",
+    "greenhouse:torcrobotics:8676173002",
+    "greenhouse:waymo:7466534",
+    "greenhouse:waymo:7554830",
+    "greenhouse:waymo:7804301",
+    "greenhouse:waymo:8031883",
+    "greenhouse:xai:5051966007",
+    "greenhouse:xai:5125621007"
   ]
 }
