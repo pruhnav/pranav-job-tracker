@@ -388,7 +388,7 @@ def cmd_fetch_jobs(args):
             print(f"  {display:<28} {provider:<11} {len(rows):>4} postings")
             time.sleep(args.delay)
 
-    print(f"\n{total:,} postings stored.")
+    print(f"\n{total:,} postings stored with provider-specific job keys.")
     if failed:
         print(f"{len(failed)} board(s) failed. Usually a wrong slug:")
         for f in failed:
@@ -463,9 +463,15 @@ def probe(provider, slug, timeout=12):
     return isinstance(data, dict) and "jobs" in data, len(data.get("jobs", []))
 
 
-DEFAULT_ROLES = ("software", "developer", "engineer", "data scien", "data analyst",
-                 "machine learning", "computer", "research", "programmer",
-                 "statistician", "analyst")
+DEFAULT_ROLES = (
+    "software", "developer", "engineer", "application", "platform", "cloud",
+    "infrastructure", "devops", "site reliability", "quality assurance",
+    "automation", "data scien", "data analyst", "analytics",
+    "business intelligence", "machine learning", "artificial intelligence",
+    "computer", "cyber", "security", "information technology", "technology",
+    "systems", "web", "mobile", "integration", "research", "programmer",
+    "statistician", "analyst",
+)
 
 
 def cmd_discover(args):
@@ -777,7 +783,7 @@ def main():
     d.add_argument("--min-certified", type=int, default=5,
                    help="Skip employers with fewer certified LCAs (default 5)")
     d.add_argument("--roles", default="",
-                   help="Comma-separated title keywords; blank uses a tech/data default set")
+                   help="Comma-separated title keywords; blank uses a broad CS/technology default set")
     d.add_argument("--states", default="",
                    help="Comma-separated 2-letter states; blank means nationwide")
     d.add_argument("--limit", type=int, default=2000, help="Max employers to probe")

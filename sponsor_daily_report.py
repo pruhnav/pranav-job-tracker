@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SponsorScan Personalized Daily Report — 48H + OPT-AWARE FILTER
+SponsorScan Personalized Report — EXPANDED NEW-GRAD + OPT-AWARE FILTER
 
 Features
 --------
@@ -10,6 +10,7 @@ V4: Company-fit ranking
 V5: Application priority and explanation columns
 V6: Daily "new since last run" report and history tracking
 V7: Keeps only jobs posted within the requested number of hours
+V8: Uses database job IDs, broader CS role families, and fit-first ranking
 
 Place this file beside sponsorscan.db, then run after fetch-jobs:
 
@@ -37,42 +38,144 @@ DEFAULT_STATE = Path(".sponsorscan_pranav_state.json")
 
 # ---------------------------- Role fit ---------------------------------
 
+# The fourth value marks role families whose titles are commonly used outside
+# software. Those roles are kept only when the posting also contains multiple
+# concrete software/data signals.
 TARGET_ROLES = [
     ("Machine Learning Engineer",
-     [r"\bmachine learning engineer\b", r"\bml engineer\b", r"\bml platform engineer\b"], 64),
+     [r"\bmachine learning engineer\b", r"\bml engineer\b",
+      r"\bml platform engineer\b"], 64, False),
     ("AI/ML Engineer",
      [r"\bai[ /-]?ml engineer\b", r"\bai engineer\b",
-      r"\bartificial intelligence engineer\b", r"\bgenerative ai engineer\b",
-      r"\bgenai engineer\b"], 64),
+      r"\bartificial intelligence engineer\b",
+      r"\bgenerative ai engineer\b", r"\bgenai engineer\b"], 64, False),
     ("Research Engineer",
-     [r"\bresearch engineer\b", r"\bmachine learning research engineer\b",
-      r"\bai research engineer\b"], 62),
+     [r"\bresearch engineer\b",
+      r"\bmachine learning research engineer\b",
+      r"\bai research engineer\b"], 62, False),
     ("Applied Scientist",
-     [r"\bapplied scientist\b", r"\bapplied machine learning scientist\b"], 61),
+     [r"\bapplied scientist\b",
+      r"\bapplied machine learning scientist\b"], 61, False),
     ("Computer Vision Engineer",
-     [r"\bcomputer vision engineer\b", r"\bvision engineer\b"], 60),
+     [r"\bcomputer vision engineer\b", r"\bvision engineer\b"], 60, False),
     ("ML Researcher",
-     [r"\bml researcher\b", r"\bmachine learning researcher\b", r"\bai researcher\b"], 59),
+     [r"\bml researcher\b", r"\bmachine learning researcher\b",
+      r"\bai researcher\b"], 59, False),
     ("Research Scientist",
-     [r"\bresearch scientist\b", r"\bai scientist\b"], 58),
+     [r"\bresearch scientist\b", r"\bai scientist\b"], 58, False),
     ("Data Scientist",
-     [r"\bdata scientist\b", r"\bmachine learning scientist\b"], 57),
+     [r"\bdata scientist\b", r"\bmachine learning scientist\b"], 57, False),
     ("Data Engineer",
-     [r"\bdata engineer\b", r"\banalytics engineer\b"], 52),
+     [r"\bdata engineer\b", r"\banalytics engineer\b"], 52, False),
     ("Backend Engineer",
-     [r"\bback[ -]?end (?:software )?engineer\b", r"\bbackend developer\b"], 50),
+     [r"\bback[ -]?end (?:software )?engineer\b",
+      r"\bbackend developer\b"], 50, False),
     ("Full Stack Engineer",
-     [r"\bfull[ -]?stack (?:software )?engineer\b", r"\bfull[ -]?stack developer\b"], 50),
+     [r"\bfull[ -]?stack (?:software )?engineer\b",
+      r"\bfull[ -]?stack developer\b"], 50, False),
+    ("Platform Engineer",
+     [r"\bplatform (?:software )?engineer\b",
+      r"\bplatform developer\b"], 50, False),
+    ("Systems Software Engineer",
+     [r"\bsystems? software engineer\b",
+      r"\bsoftware systems? engineer\b",
+      r"\bsystems? developer\b"], 49, False),
+    ("Cloud/Infrastructure Engineer",
+     [r"\bcloud (?:software )?engineer\b",
+      r"\binfrastructure (?:software )?engineer\b",
+      r"\bcloud developer\b"], 49, False),
+    ("DevOps/SRE",
+     [r"\bdevops engineer\b", r"\bsite reliability engineer\b",
+      r"\bsre\b"], 49, False),
+    ("Embedded Software Engineer",
+     [r"\bembedded software engineer\b", r"\bfirmware engineer\b",
+      r"\bembedded developer\b"], 49, False),
     ("Python Engineer",
-     [r"\bpython engineer\b", r"\bpython developer\b"], 49),
+     [r"\bpython engineer\b", r"\bpython developer\b"], 49, False),
+    ("Mobile Engineer",
+     [r"\bmobile (?:software )?engineer\b",
+      r"\bios (?:software )?engineer\b",
+      r"\bandroid (?:software )?engineer\b",
+      r"\bmobile developer\b"], 48, False),
+    ("Application Developer",
+     [r"\bapplications? (?:software )?(?:engineer|developer)\b",
+      r"\bapplication programmer\b"], 48, True),
+    ("QA Automation Engineer",
+     [r"\bqa automation engineer\b",
+      r"\btest automation engineer\b",
+      r"\bsoftware quality engineer\b",
+      r"\bsoftware test engineer\b",
+      r"\bquality assurance engineer\b"], 47, False),
+    ("Security Engineer",
+     [r"\bapplication security engineer\b",
+      r"\bsoftware security engineer\b",
+      r"\bcybersecurity engineer\b",
+      r"\bsecurity engineer\b"], 47, True),
+    ("Integration Engineer",
+     [r"\bintegration (?:software )?(?:engineer|developer)\b"], 46, True),
+    ("BI Engineer",
+     [r"\bbusiness intelligence (?:engineer|developer)\b",
+      r"\bbi (?:engineer|developer)\b",
+      r"\banalytics developer\b"], 46, False),
+    ("Web Developer",
+     [r"\bweb (?:application )?developer\b",
+      r"\bweb software engineer\b"], 46, False),
+    ("Data Analyst",
+     [r"\bdata analyst\b", r"\banalytics analyst\b"], 45, True),
+    ("Cybersecurity Analyst",
+     [r"\bcybersecurity analyst\b",
+      r"\binformation security analyst\b",
+      r"\bsecurity analyst\b"], 45, True),
+    ("Technology Analyst",
+     [r"\btechnology analyst\b", r"\bit analyst\b",
+      r"\bprogrammer analyst\b", r"\bsoftware analyst\b",
+      r"\bsystems analyst\b"], 44, True),
+    ("Technology Associate",
+     [r"\bdigital technology associate\b",
+      r"\btechnology associate\b",
+      r"\btechnology rotational (?:program|associate)\b",
+      r"\bit rotational (?:program|associate)\b"], 46, True),
+    ("Product Engineer",
+     [r"\bproduct (?:software )?engineer\b"], 46, True),
     ("Software Engineer",
      [r"\bsoftware engineer\b", r"\bsoftware developer\b",
-      r"\bsoftware development engineer\b", r"\bsde\b"], 47),
+      r"\bsoftware development engineer\b", r"\bsde\b"], 47, False),
 ]
 TARGET_ROLES = [
-    (name, [re.compile(p, re.I) for p in pats], score)
-    for name, pats, score in TARGET_ROLES
+    (name, [re.compile(p, re.I) for p in pats], score, broad)
+    for name, pats, score, broad in TARGET_ROLES
 ]
+
+TECH_ROLE_SIGNALS = [
+    ("Python", re.compile(r"\bpython\b", re.I)),
+    ("Java", re.compile(r"\bjava\b", re.I)),
+    ("C/C++", re.compile(r"\bc(?:\+\+|#)?\b", re.I)),
+    ("JavaScript/TypeScript",
+     re.compile(r"\b(?:javascript|typescript|node\.?js|react)\b", re.I)),
+    ("SQL", re.compile(r"\bsql\b|\bpostgres(?:ql)?\b|\bmysql\b", re.I)),
+    ("Software development",
+     re.compile(r"\bsoftware (?:development|engineering|design)\b", re.I)),
+    ("Programming", re.compile(r"\bprogramming\b|\bdevelop(?:ing|ment)? code\b", re.I)),
+    ("APIs/services",
+     re.compile(r"\bapi(?:s)?\b|\bmicroservices?\b|\bbackend\b|\bfrontend\b", re.I)),
+    ("Cloud",
+     re.compile(r"\baws\b|\bazure\b|\bgcp\b|\bcloud\b", re.I)),
+    ("DevOps",
+     re.compile(r"\bdocker\b|\bkubernetes\b|\bci/?cd\b|\bgithub actions\b", re.I)),
+    ("Data",
+     re.compile(r"\bdata pipeline\b|\betl\b|\banalytics\b|\bdata warehouse\b", re.I)),
+    ("Machine learning",
+     re.compile(r"\bmachine learning\b|\bdeep learning\b|\bllm", re.I)),
+    ("Computer science",
+     re.compile(r"\bcomputer science\b|\bcomputer engineering\b", re.I)),
+    ("Automation", re.compile(r"\bautomation\b|\bautomated testing\b", re.I)),
+]
+
+
+def technical_role_signals(description):
+    text = description or ""
+    return [label for label, pattern in TECH_ROLE_SIGNALS if pattern.search(text)]
+
 
 # ---------------------------- Resume fit -------------------------------
 
@@ -99,6 +202,9 @@ RESUME_SKILLS = [
     ("C++", [r"\bc\+\+\b"], 2),
     ("Java", [r"\bjava\b"], 2),
     ("JavaScript", [r"\bjavascript\b", r"\btypescript\b"], 2),
+    ("Git/GitHub", [r"\bgit\b", r"\bgithub\b"], 2),
+    ("DevOps/CI/CD", [r"\bdocker\b", r"\bkubernetes\b",
+                       r"\bci/?cd\b", r"\bgithub actions\b"], 3),
 ]
 RESUME_SKILLS = [
     (name, [re.compile(p, re.I) for p in pats], score)
@@ -157,20 +263,74 @@ POSTDOC_FACULTY_RE = re.compile(
     re.I,
 )
 
-# Aggressive experience parser. It catches:
-#   2 years
-#   2+ years
-#   2-5 years
-#   5 years building systems
-#   7+ years of software and AI engineering related experience
-#
-# A lower bound of 0 or 1 remains allowed. Anything above 1 is rejected.
+# Experience requirements appear in many forms. The numeric expression is
+# detected first, then its surrounding sentence is checked for qualification or
+# technical context. This avoids rejecting a job because it mentions "5 years
+# of service", a company anniversary, or a benefits vesting period.
 EXPERIENCE_REQUIREMENT_RE = re.compile(
     r"\b(?P<min>\d{1,2})\s*"
     r"(?:\+|(?:-|–|—|to)\s*(?P<max>\d{1,2}))?\s*"
     r"(?:years?|yrs?)\b",
     re.I,
 )
+
+EXPERIENCE_CONTEXT_RE = re.compile(
+    r"\b(?:experience|professional|industry|engineering|software|development|"
+    r"developer|programming|building|built|working|hands[ -]?on|background|"
+    r"expertise|proficiency|knowledge|minimum|at least|required|requirements?|"
+    r"qualifications?|must have|python|java|c\+\+|javascript|typescript|sql|"
+    r"backend|frontend|full[ -]?stack|cloud|data|machine learning|automation)\b",
+    re.I,
+)
+
+NON_EXPERIENCE_CONTEXT_RE = re.compile(
+    r"\b(?:years? of service|service anniversary|vesting|benefits?|founded|"
+    r"company history|serving customers|age \d|older than)\b",
+    re.I,
+)
+
+
+def extract_experience_requirements(description):
+    text = description or ""
+    requirements = []
+
+    for match in EXPERIENCE_REQUIREMENT_RE.finditer(text):
+        left = max(
+            text.rfind(".", 0, match.start()),
+            text.rfind("\n", 0, match.start()),
+            text.rfind(";", 0, match.start()),
+        )
+        right_candidates = [
+            position for position in (
+                text.find(".", match.end()),
+                text.find("\n", match.end()),
+                text.find(";", match.end()),
+            )
+            if position != -1
+        ]
+        right = min(right_candidates) if right_candidates else len(text)
+        context = text[max(left + 1, match.start() - 100):min(right, match.end() + 180)]
+
+        if NON_EXPERIENCE_CONTEXT_RE.search(context) and not re.search(
+            r"\b(?:experience|required|minimum|at least|must have)\b",
+            context,
+            re.I,
+        ):
+            continue
+
+        if not EXPERIENCE_CONTEXT_RE.search(context):
+            continue
+
+        requirements.append(
+            (
+                int(match.group("min")),
+                int(match.group("max")) if match.group("max") else None,
+                re.sub(r"\s+", " ", context).strip(),
+            )
+        )
+
+    return requirements
+
 
 # -------------------------- Sponsorship fit ----------------------------
 
@@ -228,7 +388,7 @@ COMPANY_TIERS = {
         "benchling", "netflix"
     },
 }
-COMPANY_TIER_POINTS = {5: 16, 4: 11, 3: 6}
+COMPANY_TIER_POINTS = {5: 8, 4: 6, 3: 4}
 
 # ---------------------------- US location ------------------------------
 
@@ -272,7 +432,7 @@ def normalize_url(url):
         return ""
     try:
         parts = urlsplit(url.strip())
-        # Remove tracking query strings but preserve job identifiers embedded in path.
+        # Legacy state keys removed query strings; retained only for one-time migration.
         return urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path.rstrip("/"), "", ""))
     except Exception:
         return url.strip()
@@ -290,11 +450,19 @@ def stable_job_key(company, title, location, url):
     return text
 
 
-def classify_role(title):
-    for family, patterns, base in TARGET_ROLES:
-        if any(p.search(title or "") for p in patterns):
-            return family, base
-    return None, 0
+def classify_role(title, description):
+    role_signals = technical_role_signals(description)
+
+    for family, patterns, base, requires_tech_signals in TARGET_ROLES:
+        if not any(pattern.search(title or "") for pattern in patterns):
+            continue
+
+        if requires_tech_signals and len(role_signals) < 2:
+            continue
+
+        return family, base, role_signals
+
+    return None, 0, role_signals
 
 
 def score_skills(title, description):
@@ -332,23 +500,19 @@ def career_level_score(title, description):
             return None, "PhD mentioned in description", [], None
         return None, "Master's mentioned in description", [], None
 
-    experience_matches = list(EXPERIENCE_REQUIREMENT_RE.finditer(description_text))
-    requirements = [
-        (
-            int(match.group("min")),
-            int(match.group("max")) if match.group("max") else None,
-        )
-        for match in experience_matches
-    ]
+    requirements = extract_experience_requirements(description_text)
 
-    # Use every detected years phrase, not the smallest one.
-    # Therefore "1 year in Python and 5+ years overall" is rejected.
-    disqualifying = [minimum for minimum, _ in requirements if minimum > 1]
+    # Use every detected qualification. Therefore a posting that mentions
+    # "1 year with Python" and "5+ years overall" is still rejected.
+    disqualifying = [minimum for minimum, _, _ in requirements if minimum > 1]
     if disqualifying:
         required = max(disqualifying)
         return None, f"{required}+ years required", [], required
 
-    years_required = max((minimum for minimum, _ in requirements), default=None)
+    years_required = max(
+        (minimum for minimum, _, _ in requirements),
+        default=None,
+    )
 
     # ---------------- Phase 2: entry-level scoring ----------------
 
@@ -425,46 +589,72 @@ def load_employers(con):
 
 
 def sponsorship_score(emp, title, blob):
+    """
+    Score sponsorship history as supporting evidence, not as the main fit score.
+    The value is capped so a famous high-volume filer cannot turn a weak resume
+    match into an Apply recommendation.
+    """
     score = 0
     signals = []
 
     if emp and emp["certified"] > 0:
-        score += 28
+        score += 8
         signals.append(f"{emp['certified']} certified LCAs")
 
         if emp["certified"] >= 100:
-            score += 12
-        elif emp["certified"] >= 25:
-            score += 8
-        elif emp["certified"] >= 5:
-            score += 4
-
-        if emp["senior_share"] is not None and emp["senior_share"] >= 0.5:
             score += 5
+        elif emp["certified"] >= 25:
+            score += 3
+        elif emp["certified"] >= 5:
+            score += 1
 
-        words = [w for w in re.findall(r"[a-z]+", (title or "").lower()) if len(w) >= 5]
-        if words and any(any(word in old for word in words) for old in emp["titles"]):
-            score += 10
+        words = [
+            word for word in re.findall(r"[a-z]+", (title or "").lower())
+            if len(word) >= 5
+        ]
+        if words and any(
+            any(word in historical_title for word in words)
+            for historical_title in emp["titles"]
+        ):
+            score += 4
             signals.append("historical LCA title overlap")
 
         if emp["trouble_rate"] is not None and emp["trouble_rate"] >= 0.25:
-            score -= 8
+            score -= 3
             signals.append("higher denied/withdrawn share")
 
-    if any(p.search(blob) for p in SPONSOR_POS_RE):
-        score += 12
+    if any(pattern.search(blob) for pattern in SPONSOR_POS_RE):
+        score += 5
         signals.append("posting mentions sponsorship")
 
-    return score, signals
+    return max(-3, min(score, 22)), signals
 
 
-def priority_label(score, resume_fit, career_score):
-    if score >= 155 and resume_fit >= 78 and career_score >= 0:
+def priority_label(score, resume_fit, career_score, matched_skill_count):
+    """
+    Application priority is gated by personal fit. Company prestige and LCA
+    history can improve the score but cannot create a high priority by themselves.
+    """
+    if (
+        score >= 115
+        and resume_fit >= 78
+        and matched_skill_count >= 4
+        and career_score >= 0
+    ):
         return "P1 — Apply ASAP"
-    if score >= 135 and resume_fit >= 68:
+
+    if score >= 100 and resume_fit >= 68 and matched_skill_count >= 2:
         return "P2 — Strong Apply"
-    if score >= 115:
+
+    if (
+        score >= 85
+        and (
+            (resume_fit >= 58 and matched_skill_count >= 1)
+            or (career_score >= 11 and resume_fit >= 50)
+        )
+    ):
         return "P3 — Apply"
+
     return "P4 — Review"
 
 
@@ -560,15 +750,15 @@ def main():
                         help="Snapshot file used to identify new jobs")
     parser.add_argument("--top", type=int, default=50,
                         help="How many top jobs to print")
-    parser.add_argument("--min-score", type=int, default=85,
+    parser.add_argument("--min-score", type=int, default=70,
                         help="Minimum combined score to keep")
     parser.add_argument("--include-non-us", action="store_true")
     parser.add_argument("--include-internships", action="store_true",
                         help="Internships are included by default only if title matches target roles")
     parser.add_argument("--reset-state", action="store_true",
                         help="Treat all current matches as new")
-    parser.add_argument("--hours", type=float, default=48,
-                        help="Keep only jobs posted within this many hours (default: 24)")
+    parser.add_argument("--hours", type=float, default=168,
+                        help="Keep only jobs posted within this many hours (default: 168)")
     parser.add_argument("--include-unknown-posted", action="store_true",
                         help="Also keep jobs whose ATS provides no usable posting date")
     args = parser.parse_args()
@@ -589,7 +779,7 @@ def main():
 
     try:
         jobs = con.execute(
-            "SELECT company, company_norm, title, location, url, posted, description, source "
+            "SELECT job_key, company, company_norm, title, location, url, posted, description, source "
             "FROM jobs"
         ).fetchall()
     except sqlite3.OperationalError as exc:
@@ -600,11 +790,11 @@ def main():
         "disqualifier": 0, "role": 0, "career": 0,
         "phd_title": 0, "level_title": 0, "experience_2plus": 0,
         "phd_required": 0, "masters_required": 0,
-        "location": 0, "score": 0,
+        "location": 0, "score": 0, "weak_fit": 0,
         "posted_too_old": 0, "posted_unknown": 0,
     }
 
-    for company, company_norm, title, location, url, posted, description, source in jobs:
+    for database_job_key, company, company_norm, title, location, url, posted, description, source in jobs:
         parsed_posted = parse_posted_datetime(posted)
         if parsed_posted is None:
             if not args.include_unknown_posted:
@@ -620,7 +810,7 @@ def main():
             counts["disqualifier"] += 1
             continue
 
-        role_family, role_base = classify_role(title)
+        role_family, role_base, role_tech_signals = classify_role(title, description)
         if not role_family:
             counts["role"] += 1
             continue
@@ -649,6 +839,12 @@ def main():
         skills, skill_score = score_skills(title, description)
         resume_fit = min(100, role_base + skill_score)
 
+        # Do not let a company/LCA score rescue a role that has neither a
+        # demonstrated resume-skill match nor an explicit entry-level signal.
+        if not skills and not level_signals:
+            counts["weak_fit"] += 1
+            continue
+
         tier = company_tier(company)
         company_points = COMPANY_TIER_POINTS.get(tier, 2)
 
@@ -666,8 +862,12 @@ def main():
             counts["score"] += 1
             continue
 
-        key = stable_job_key(company, title, location, url)
-        is_new = key not in previous_keys
+        # Use the provider-specific key already stored by sponsorscan.py.
+        # The legacy URL key is checked once so existing state files migrate
+        # without emailing every currently active job again.
+        legacy_key = stable_job_key(company, title, location, url)
+        key = database_job_key or legacy_key
+        is_new = key not in previous_keys and legacy_key not in previous_keys
 
         reasons = [
             f"{resume_fit}/100 resume fit",
@@ -675,10 +875,14 @@ def main():
             f"company tier {tier}/5",
         ]
         reasons.extend(level_signals)
+        if role_tech_signals:
+            reasons.append("technical signals: " + ", ".join(role_tech_signals[:5]))
         reasons.extend(sponsor_signals)
 
         results.append({
-            "application_priority": "",  # assigned after score is known
+            "application_priority": priority_label(
+                combined_score, resume_fit, level_score, len(skills)
+            ),
             "combined_score": combined_score,
             "resume_fit_score": resume_fit,
             "career_level_score": level_score,
@@ -700,23 +904,22 @@ def main():
             "job_key": key,
         })
 
+    priority_rank = {
+        "P1 — Apply ASAP": 1,
+        "P2 — Strong Apply": 2,
+        "P3 — Apply": 3,
+        "P4 — Review": 4,
+    }
     results.sort(
-        key=lambda r: (
-            -(parse_posted_datetime(r["posted"]).timestamp()
-              if parse_posted_datetime(r["posted"]) else 0),
-            -r["combined_score"],
-            -r["resume_fit_score"],
-            -r["company_tier"],
-            r["company"].lower(),
+        key=lambda row: (
+            priority_rank.get(row["application_priority"], 9),
+            -row["combined_score"],
+            -row["resume_fit_score"],
+            -(parse_posted_datetime(row["posted"]).timestamp()
+              if parse_posted_datetime(row["posted"]) else 0),
+            row["company"].lower(),
         )
     )
-
-    for row in results:
-        row["application_priority"] = priority_label(
-            row["combined_score"],
-            row["resume_fit_score"],
-            row["career_level_score"],
-        )
 
     new_results = [row for row in results if row["is_new_since_last_run"] == "YES"]
 
@@ -750,6 +953,7 @@ def main():
     print(f"  - {counts['masters_required']:,} mentioned a master's degree in the description")
     print(f"{counts['role']:,} dropped outside your target role list")
     print(f"{counts['location']:,} dropped as non-US or unrecognized")
+    print(f"{counts['weak_fit']:,} dropped because they had no resume-skill or entry-level signal")
     print(f"{counts['score']:,} dropped below combined score {args.min_score}")
     print()
 
