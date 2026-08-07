@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-07T20:50:54.311617+00:00",
+  "generated_at_utc": "2026-08-07T21:47:10.173255+00:00",
   "active_job_keys": [
     "greenhouse:block:4901418008",
     "greenhouse:mongodb:7523834",
@@ -10,6 +10,12 @@
     "greenhouse:stripe:7979393",
     "greenhouse:stripe:8070570",
     "greenhouse:stripe:8084195",
-    "greenhouse:verkada:4129304007"
+    "greenhouse:verkada:4129304007",
+    "greenhouse:xai:4533894007",
+    "greenhouse:xai:4803905007",
+    "greenhouse:xai:5051966007",
+    "greenhouse:xai:5125621007",
+    "greenhouse:xai:5152408007",
+    "greenhouse:xai:5182374007"
   ]
 }
