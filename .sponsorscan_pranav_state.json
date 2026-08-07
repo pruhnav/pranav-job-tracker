@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-06T15:21:53.515070+00:00",
+  "generated_at_utc": "2026-08-07T00:09:35.589725+00:00",
   "active_job_keys": [
     "greenhouse:mongodb:7523834",
     "greenhouse:roblox:8025021",
@@ -7,12 +7,6 @@
     "greenhouse:roblox:8080438",
     "greenhouse:roku:7527300",
     "greenhouse:stripe:7979393",
-    "greenhouse:torcrobotics:8676173002",
-    "greenhouse:waymo:7466534",
-    "greenhouse:waymo:7554830",
-    "greenhouse:waymo:7804301",
-    "greenhouse:waymo:8031883",
-    "greenhouse:xai:5051966007",
-    "greenhouse:xai:5125621007"
+    "greenhouse:stripe:8084195"
   ]
 }
