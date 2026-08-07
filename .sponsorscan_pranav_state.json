@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-07T07:26:55.324463+00:00",
+  "generated_at_utc": "2026-08-07T14:17:11.566158+00:00",
   "active_job_keys": [
     "greenhouse:mongodb:7523834",
     "greenhouse:roblox:8025021",
@@ -7,6 +7,7 @@
     "greenhouse:roblox:8080438",
     "greenhouse:roku:7527300",
     "greenhouse:stripe:7979393",
+    "greenhouse:stripe:8070570",
     "greenhouse:stripe:8084195"
   ]
 }
