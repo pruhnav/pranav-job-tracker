@@ -1,10 +1,7 @@
 {
-  "generated_at_utc": "2026-08-12T23:51:23.064914+00:00",
+  "generated_at_utc": "2026-08-13T02:28:18.697051+00:00",
   "active_job_keys": [
-    "ashby:sierra:93fea91f-a8a2-4084-8113-1cde73344e33",
     "ashby:snowflake:74466b25-9cc8-4e9b-b60b-234c539c455c",
-    "greenhouse:figma:5691911004",
-    "greenhouse:janestreet:8631973002",
     "greenhouse:mongodb:7523834",
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8080438",
