@@ -1,20 +1,10 @@
 {
-  "generated_at_utc": "2026-08-14T23:29:10.329718+00:00",
+  "generated_at_utc": "2026-08-15T01:37:27.957405+00:00",
   "active_job_keys": [
     "ashby:notion:3fba1c39-c5cb-47d7-9ad2-1cec4d7e9d0c",
     "ashby:notion:e32799d2-8ef8-4803-8189-c72514afa816",
     "ashby:notion:e66c6658-9e65-4c58-8db2-844628b6e8f8",
-    "ashby:sierra:4472e6c2-fe4e-4540-a37c-68b9367fe02a",
-    "greenhouse:appian:8035372",
-    "greenhouse:appian:8035744",
-    "greenhouse:appian:8041241",
-    "greenhouse:appian:8088496",
-    "greenhouse:applovin:4705263006",
     "greenhouse:applovin:4705264006",
-    "greenhouse:harbingermotors:5173416007",
-    "greenhouse:janestreet:6485460002",
-    "greenhouse:robinhood:8067604",
-    "greenhouse:robinhood:8077370",
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8080438",
     "greenhouse:roblox:8097701",
@@ -22,12 +12,6 @@
     "greenhouse:waymo:7466534",
     "greenhouse:waymo:7554830",
     "greenhouse:waymo:7804301",
-    "greenhouse:waymo:8031883",
-    "greenhouse:xai:4533894007",
-    "greenhouse:xai:4803905007",
-    "greenhouse:xai:5051966007",
-    "greenhouse:xai:5125621007",
-    "greenhouse:xai:5152408007",
-    "greenhouse:xai:5182374007"
+    "greenhouse:waymo:8031883"
   ]
 }
