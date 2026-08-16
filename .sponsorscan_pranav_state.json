@@ -1,17 +1,8 @@
 {
-  "generated_at_utc": "2026-08-15T23:27:18.559551+00:00",
+  "generated_at_utc": "2026-08-16T01:44:42.727720+00:00",
   "active_job_keys": [
-    "ashby:notion:3fba1c39-c5cb-47d7-9ad2-1cec4d7e9d0c",
-    "ashby:notion:e32799d2-8ef8-4803-8189-c72514afa816",
-    "ashby:notion:e66c6658-9e65-4c58-8db2-844628b6e8f8",
-    "greenhouse:applovin:4705264006",
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8080438",
-    "greenhouse:roblox:8097701",
-    "greenhouse:roblox:8113334",
-    "greenhouse:waymo:7466534",
-    "greenhouse:waymo:7554830",
-    "greenhouse:waymo:7804301",
-    "greenhouse:waymo:8031883"
+    "greenhouse:roblox:8097701"
   ]
 }
