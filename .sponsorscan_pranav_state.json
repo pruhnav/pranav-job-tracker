@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-18T20:32:42.869035+00:00",
+  "generated_at_utc": "2026-08-18T22:32:18.434729+00:00",
   "active_job_keys": [
     "greenhouse:applovin:4705264006",
     "greenhouse:mongodb:7523834",
@@ -11,6 +11,7 @@
     "greenhouse:roblox:8113334",
     "greenhouse:roblox:8123004",
     "greenhouse:rubrik:8076167",
+    "greenhouse:stripe:8084195",
     "greenhouse:stripe:8137997",
     "greenhouse:xai:4533894007",
     "greenhouse:xai:4803905007",
