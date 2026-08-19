@@ -1,16 +1,10 @@
 {
-  "generated_at_utc": "2026-08-18T23:28:57.415760+00:00",
+  "generated_at_utc": "2026-08-19T01:39:40.043710+00:00",
   "active_job_keys": [
-    "greenhouse:applovin:4705264006",
-    "greenhouse:mongodb:7523834",
-    "greenhouse:robinhood:8067604",
-    "greenhouse:robinhood:8077370",
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8080438",
     "greenhouse:roblox:8097701",
-    "greenhouse:roblox:8113334",
     "greenhouse:roblox:8123004",
-    "greenhouse:rubrik:8076167",
     "greenhouse:stripe:8084195",
     "greenhouse:stripe:8137997",
     "greenhouse:xai:4533894007",
