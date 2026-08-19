@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-19T04:44:05.196812+00:00",
+  "generated_at_utc": "2026-08-19T05:38:18.675853+00:00",
   "active_job_keys": [
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8080438",
@@ -7,6 +7,7 @@
     "greenhouse:roblox:8123004",
     "greenhouse:stripe:8084195",
     "greenhouse:stripe:8137997",
+    "greenhouse:verkada:4129304007",
     "greenhouse:xai:4533894007",
     "greenhouse:xai:4803905007",
     "greenhouse:xai:5051966007",
