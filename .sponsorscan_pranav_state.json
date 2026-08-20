@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-20T22:34:52.741476+00:00",
+  "generated_at_utc": "2026-08-20T23:33:05.848447+00:00",
   "active_job_keys": [
     "greenhouse:brex:8606845002",
     "greenhouse:brex:8606885002",
@@ -18,6 +18,7 @@
     "greenhouse:waymo:7804301",
     "greenhouse:waymo:8031883",
     "greenhouse:xai:4533894007",
+    "greenhouse:xai:4703144007",
     "greenhouse:xai:4803905007",
     "greenhouse:xai:5051966007",
     "greenhouse:xai:5125621007",
