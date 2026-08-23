@@ -1,18 +1,8 @@
 {
-  "generated_at_utc": "2026-08-22T23:28:09.698868+00:00",
+  "generated_at_utc": "2026-08-23T01:46:41.693401+00:00",
   "active_job_keys": [
-    "greenhouse:robinhood:8077370",
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8097701",
-    "greenhouse:roblox:8123004",
-    "greenhouse:tenstorrent:4717175007",
-    "greenhouse:twilio:7816159",
-    "greenhouse:xai:4533894007",
-    "greenhouse:xai:4703144007",
-    "greenhouse:xai:4803905007",
-    "greenhouse:xai:5051966007",
-    "greenhouse:xai:5125621007",
-    "greenhouse:xai:5152408007",
-    "greenhouse:xai:5182374007"
+    "greenhouse:roblox:8123004"
   ]
 }
