@@ -1,9 +1,12 @@
 {
-  "generated_at_utc": "2026-08-24T17:37:58.886048+00:00",
+  "generated_at_utc": "2026-08-24T18:51:12.069807+00:00",
   "active_job_keys": [
     "greenhouse:robinhood:8067604",
     "greenhouse:roblox:8025021",
     "greenhouse:roblox:8097701",
-    "greenhouse:roblox:8123004"
+    "greenhouse:roblox:8123004",
+    "greenhouse:verkada:4129304007",
+    "greenhouse:verkada:5191604007",
+    "greenhouse:verkada:5195995007"
   ]
 }
