@@ -1,23 +1,32 @@
 {
-  "generated_at_utc": "2026-08-26T19:11:45.039184+00:00",
+  "generated_at_utc": "2026-08-26T23:13:39.438768+00:00",
   "active_job_keys": [
     "ashby:notion:9fc52821-c394-4a80-85ba-5f1d7c36fb2b",
     "greenhouse:appian:8156557",
     "greenhouse:applovin:4705264006",
     "greenhouse:asteralabs:4597484005",
+    "greenhouse:block:4901418008",
     "greenhouse:janestreet:6485460002",
     "greenhouse:janestreet:8632723002",
+    "greenhouse:nuro:7351066",
+    "greenhouse:nuro:7896063",
     "greenhouse:robinhood:8067604",
     "greenhouse:robinhood:8077370",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
+    "greenhouse:roblox:8115917",
     "greenhouse:roblox:8123004",
     "greenhouse:roku:8158015",
     "greenhouse:tenstorrent:4717175007",
-    "greenhouse:torcrobotics:8728723002",
     "greenhouse:waymo:7466534",
     "greenhouse:waymo:7554830",
     "greenhouse:waymo:7804301",
-    "greenhouse:waymo:8031883"
+    "greenhouse:waymo:8031883",
+    "greenhouse:xai:4533894007",
+    "greenhouse:xai:4703144007",
+    "greenhouse:xai:4803905007",
+    "greenhouse:xai:5051966007",
+    "greenhouse:xai:5125621007",
+    "greenhouse:xai:5182374007"
   ]
 }
