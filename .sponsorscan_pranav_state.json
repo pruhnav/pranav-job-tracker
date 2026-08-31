@@ -1,7 +1,9 @@
 {
-  "generated_at_utc": "2026-08-31T19:29:59.457637+00:00",
+  "generated_at_utc": "2026-08-31T23:42:47.672918+00:00",
   "active_job_keys": [
+    "ashby:sierra:149f368c-52d5-408f-ba26-ad888f318a00",
     "ashby:sierra:1d5cf6f0-feba-46a6-98bc-70a1627a76d0",
+    "greenhouse:block:4901418008",
     "greenhouse:purestorage:8166226",
     "greenhouse:robinhood:8067604",
     "greenhouse:roblox:8060254",
@@ -9,6 +11,8 @@
     "greenhouse:roblox:8113334",
     "greenhouse:roblox:8115917",
     "greenhouse:roblox:8123004",
-    "greenhouse:roku:8158015"
+    "greenhouse:roku:8158015",
+    "greenhouse:stripe:8128744",
+    "greenhouse:stripe:8128745"
   ]
 }
