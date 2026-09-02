@@ -1,12 +1,9 @@
 {
-  "generated_at_utc": "2026-09-01T23:14:48.611071+00:00",
+  "generated_at_utc": "2026-09-02T03:59:16.166919+00:00",
   "active_job_keys": [
-    "ashby:sierra:149f368c-52d5-408f-ba26-ad888f318a00",
-    "ashby:sierra:1d5cf6f0-feba-46a6-98bc-70a1627a76d0",
     "ashby:valon:b5a62c0c-823c-42dd-8cb5-e4b1455bcc64",
     "ashby:valon:e08ad09a-4408-4210-8c1b-da6510f83324",
     "greenhouse:applovin:4705264006",
-    "greenhouse:block:4901418008",
     "greenhouse:harbingermotors:4518625007",
     "greenhouse:harbingermotors:5173416007",
     "greenhouse:roblox:8060254",
@@ -15,6 +12,7 @@
     "greenhouse:roblox:8115917",
     "greenhouse:roblox:8123004",
     "greenhouse:roku:8158015",
+    "greenhouse:scaleai:4302243005",
     "greenhouse:stripe:8128744",
     "greenhouse:stripe:8128745"
   ]
