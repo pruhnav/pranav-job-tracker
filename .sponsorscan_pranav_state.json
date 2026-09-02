@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-02T17:07:34.330807+00:00",
+  "generated_at_utc": "2026-09-02T20:55:16.901462+00:00",
   "active_job_keys": [
     "ashby:cerebras:91bc61c1-29db-4a47-817d-30e921064af5",
     "ashby:valon:b5a62c0c-823c-42dd-8cb5-e4b1455bcc64",
@@ -17,6 +17,10 @@
     "greenhouse:roku:8158015",
     "greenhouse:scaleai:4302243005",
     "greenhouse:stripe:8128744",
-    "greenhouse:stripe:8128745"
+    "greenhouse:stripe:8128745",
+    "greenhouse:waymo:7466534",
+    "greenhouse:waymo:7554830",
+    "greenhouse:waymo:7804301",
+    "greenhouse:waymo:8031883"
   ]
 }
