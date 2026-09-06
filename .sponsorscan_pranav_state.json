@@ -1,24 +1,11 @@
 {
-  "generated_at_utc": "2026-09-05T23:43:32.350440+00:00",
+  "generated_at_utc": "2026-09-06T04:02:50.751190+00:00",
   "active_job_keys": [
-    "greenhouse:appian:8156557",
-    "greenhouse:appian:8178208",
-    "greenhouse:lyft:8772571002",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
     "greenhouse:roblox:8115917",
     "greenhouse:roblox:8123004",
-    "greenhouse:roku:8158015",
-    "greenhouse:stripe:8128744",
-    "greenhouse:stripe:8128745",
-    "greenhouse:stripe:8137997",
-    "greenhouse:xai:4533894007",
-    "greenhouse:xai:4703144007",
-    "greenhouse:xai:4803905007",
-    "greenhouse:xai:5051966007",
-    "greenhouse:xai:5125621007",
-    "greenhouse:xai:5152408007",
-    "greenhouse:xai:5182374007"
+    "greenhouse:roku:8158015"
   ]
 }
