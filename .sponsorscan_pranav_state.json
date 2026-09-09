@@ -1,12 +1,11 @@
 {
-  "generated_at_utc": "2026-09-08T23:22:43.234023+00:00",
+  "generated_at_utc": "2026-09-09T04:11:21.996559+00:00",
   "active_job_keys": [
     "greenhouse:appian:8156557",
     "greenhouse:applovin:4705263006",
     "greenhouse:coinbase:8168315",
     "greenhouse:coinbase:8175459",
     "greenhouse:coinbase:8175471",
-    "greenhouse:robinhood:8067604",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
