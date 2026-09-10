@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-10T19:34:16.413307+00:00",
+  "generated_at_utc": "2026-09-10T22:25:53.188322+00:00",
   "active_job_keys": [
     "greenhouse:lyft:8772571002",
     "greenhouse:purestorage:7681034",
@@ -9,9 +9,13 @@
     "greenhouse:roblox:8115917",
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
+    "greenhouse:scaleai:4718258005",
     "greenhouse:stripe:8128744",
     "greenhouse:stripe:8128745",
     "greenhouse:stripe:8137997",
+    "greenhouse:verkada:4129304007",
+    "greenhouse:verkada:5191604007",
+    "greenhouse:verkada:5195995007",
     "lever:spotify:56ea6f2e-f20b-4e46-ab94-d3eb0a89482d"
   ]
 }
