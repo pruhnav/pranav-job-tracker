@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-15T17:38:19.525782+00:00",
+  "generated_at_utc": "2026-09-15T21:09:34.808959+00:00",
   "active_job_keys": [
     "greenhouse:appian:8088496",
     "greenhouse:duolingo:8806114002",
@@ -13,6 +13,7 @@
     "greenhouse:roku:8158015",
     "greenhouse:stripe:8197135",
     "greenhouse:stripe:8198207",
-    "greenhouse:stripe:8198280"
+    "greenhouse:stripe:8198280",
+    "lever:spotify:318f73b5-6a78-49c7-b625-ecb1481042b9"
   ]
 }
