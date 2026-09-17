@@ -1,13 +1,10 @@
 {
-  "generated_at_utc": "2026-09-16T21:10:24.034939+00:00",
+  "generated_at_utc": "2026-09-17T00:16:57.476967+00:00",
   "active_job_keys": [
-    "greenhouse:appian:8088496",
     "greenhouse:appian:8156557",
     "greenhouse:appian:8178208",
     "greenhouse:applovin:4705263006",
     "greenhouse:applovin:4705264006",
-    "greenhouse:coinbase:8168315",
-    "greenhouse:duolingo:8806114002",
     "greenhouse:purestorage:8018603",
     "greenhouse:purestorage:8201910",
     "greenhouse:roblox:8060254",
@@ -17,7 +14,6 @@
     "greenhouse:roblox:8168383",
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
-    "greenhouse:twilio:8178588",
-    "lever:spotify:318f73b5-6a78-49c7-b625-ecb1481042b9"
+    "greenhouse:twilio:8178588"
   ]
 }
