@@ -1,10 +1,8 @@
 {
-  "generated_at_utc": "2026-09-17T21:14:11.717702+00:00",
+  "generated_at_utc": "2026-09-18T00:03:19.466931+00:00",
   "active_job_keys": [
-    "greenhouse:appian:8156557",
-    "greenhouse:appian:8178208",
-    "greenhouse:applovin:4705263006",
-    "greenhouse:applovin:4705264006",
+    "greenhouse:figma:6131089004",
+    "greenhouse:figma:6143238004",
     "greenhouse:harbingermotors:4518625007",
     "greenhouse:harbingermotors:5173416007",
     "greenhouse:harbingermotors:5174694007",
@@ -20,7 +18,6 @@
     "greenhouse:janestreet:8631973002",
     "greenhouse:janestreet:8632723002",
     "greenhouse:purestorage:8018603",
-    "greenhouse:purestorage:8201910",
     "greenhouse:purestorage:8211954",
     "greenhouse:purestorage:8211966",
     "greenhouse:roblox:8060254",
@@ -30,6 +27,7 @@
     "greenhouse:roblox:8168383",
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
-    "greenhouse:twilio:8178588"
+    "greenhouse:stripe:8128744",
+    "greenhouse:stripe:8212508"
   ]
 }
