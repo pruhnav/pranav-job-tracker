@@ -1,25 +1,6 @@
 {
-  "generated_at_utc": "2026-09-18T23:12:14.059819+00:00",
+  "generated_at_utc": "2026-09-19T04:08:40.076313+00:00",
   "active_job_keys": [
-    "greenhouse:figma:6131089004",
-    "greenhouse:figma:6143238004",
-    "greenhouse:harbingermotors:4518625007",
-    "greenhouse:harbingermotors:5173416007",
-    "greenhouse:harbingermotors:5174694007",
-    "greenhouse:janestreet:4274288002",
-    "greenhouse:janestreet:4276720002",
-    "greenhouse:janestreet:6184529002",
-    "greenhouse:janestreet:6485460002",
-    "greenhouse:janestreet:6558007002",
-    "greenhouse:janestreet:8419303002",
-    "greenhouse:janestreet:8576928002",
-    "greenhouse:janestreet:8594541002",
-    "greenhouse:janestreet:8599644002",
-    "greenhouse:janestreet:8631973002",
-    "greenhouse:janestreet:8632723002",
-    "greenhouse:purestorage:8018603",
-    "greenhouse:purestorage:8211954",
-    "greenhouse:purestorage:8211966",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
@@ -27,8 +8,6 @@
     "greenhouse:roblox:8168383",
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
-    "greenhouse:stripe:8128744",
-    "greenhouse:stripe:8212508",
     "greenhouse:twilio:8178588"
   ]
 }
