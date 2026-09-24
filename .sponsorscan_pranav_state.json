@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-24T11:38:41.438834+00:00",
+  "generated_at_utc": "2026-09-24T17:50:55.564036+00:00",
   "active_job_keys": [
     "ashby:ramp:a13ae586-f4cb-4385-8822-c42b9b54ed74",
     "ashby:sierra:33dbd62f-8212-4ea8-9b59-74370c1f2803",
@@ -8,8 +8,13 @@
     "ashby:sierra:d2dc9baf-30d4-4708-9227-62a946b4b37e",
     "ashby:sierra:f3308520-6d7d-45ac-b96d-3f5a5012e6c9",
     "ashby:sierra:fd5df98a-e2c8-4d47-a803-daee5cccb36f",
+    "greenhouse:appian:8035372",
+    "greenhouse:appian:8088496",
+    "greenhouse:appian:8156557",
+    "greenhouse:appian:8178208",
     "greenhouse:asteralabs:4597484005",
     "greenhouse:block:5381381008",
+    "greenhouse:figma:5691911004",
     "greenhouse:figma:6178851004",
     "greenhouse:harbingermotors:5173416007",
     "greenhouse:harbingermotors:5174694007",
