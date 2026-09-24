@@ -1,6 +1,7 @@
 {
-  "generated_at_utc": "2026-09-24T00:22:34.232317+00:00",
+  "generated_at_utc": "2026-09-24T06:00:24.320030+00:00",
   "active_job_keys": [
+    "ashby:ramp:a13ae586-f4cb-4385-8822-c42b9b54ed74",
     "ashby:sierra:33dbd62f-8212-4ea8-9b59-74370c1f2803",
     "ashby:sierra:b9b9b5e0-7304-4265-aa71-d71d80d29402",
     "ashby:sierra:c729c633-0376-436e-8f2b-1501088b85b0",
@@ -10,6 +11,7 @@
     "greenhouse:asteralabs:4597484005",
     "greenhouse:block:5381381008",
     "greenhouse:figma:6178851004",
+    "greenhouse:harbingermotors:5173416007",
     "greenhouse:harbingermotors:5174694007",
     "greenhouse:mongodb:8065483",
     "greenhouse:nuro:8227399",
@@ -19,8 +21,16 @@
     "greenhouse:roblox:8113334",
     "greenhouse:roblox:8115917",
     "greenhouse:roblox:8168383",
+    "greenhouse:roblox:8168881",
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
-    "greenhouse:roku:8223823"
+    "greenhouse:roku:8223823",
+    "greenhouse:xai:4533894007",
+    "greenhouse:xai:4703144007",
+    "greenhouse:xai:4803905007",
+    "greenhouse:xai:5051966007",
+    "greenhouse:xai:5125621007",
+    "greenhouse:xai:5152408007",
+    "greenhouse:xai:5182374007"
   ]
 }
