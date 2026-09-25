@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-25T17:53:58.579571+00:00",
+  "generated_at_utc": "2026-09-25T21:24:41.359036+00:00",
   "active_job_keys": [
     "ashby:notion:2b587e66-deac-421a-a824-9415ba78b5a7",
     "ashby:ramp:a13ae586-f4cb-4385-8822-c42b9b54ed74",
@@ -22,9 +22,15 @@
     "greenhouse:roblox:8168881",
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
+    "greenhouse:stripe:8128744",
+    "greenhouse:stripe:8128745",
+    "greenhouse:stripe:8197135",
+    "greenhouse:stripe:8198207",
+    "greenhouse:stripe:8198280",
+    "greenhouse:stripe:8212508",
     "greenhouse:verkada:4129304007",
     "greenhouse:verkada:5195995007",
-    "greenhouse:waymo:7804301",
+    "greenhouse:waymo:8224900",
     "greenhouse:xai:4533894007",
     "greenhouse:xai:4703144007",
     "greenhouse:xai:4803905007",
