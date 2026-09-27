@@ -1,8 +1,6 @@
 {
-  "generated_at_utc": "2026-09-26T22:37:39.240435+00:00",
+  "generated_at_utc": "2026-09-27T01:17:03.061277+00:00",
   "active_job_keys": [
-    "greenhouse:block:5381381008",
-    "greenhouse:mongodb:8065483",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
@@ -10,13 +8,6 @@
     "greenhouse:roblox:8168383",
     "greenhouse:roblox:8168881",
     "greenhouse:roblox:8171506",
-    "greenhouse:roku:8158015",
-    "greenhouse:stripe:8128744",
-    "greenhouse:stripe:8128745",
-    "greenhouse:stripe:8197135",
-    "greenhouse:stripe:8198207",
-    "greenhouse:stripe:8198280",
-    "greenhouse:stripe:8212508",
-    "greenhouse:waymo:8224900"
+    "greenhouse:roku:8158015"
   ]
 }
