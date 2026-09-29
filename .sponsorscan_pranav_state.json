@@ -1,7 +1,6 @@
 {
-  "generated_at_utc": "2026-09-28T21:47:32.941204+00:00",
+  "generated_at_utc": "2026-09-29T01:43:13.841617+00:00",
   "active_job_keys": [
-    "greenhouse:coinbase:8168315",
     "greenhouse:janestreet:4274288002",
     "greenhouse:janestreet:4276720002",
     "greenhouse:janestreet:6184529002",
@@ -14,6 +13,7 @@
     "greenhouse:janestreet:8631973002",
     "greenhouse:janestreet:8632723002",
     "greenhouse:mongodb:8065483",
+    "greenhouse:nuro:8227399",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
@@ -23,6 +23,9 @@
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
     "greenhouse:roku:8223823",
-    "greenhouse:twilio:7816159"
+    "greenhouse:twilio:7816159",
+    "greenhouse:verkada:4129304007",
+    "greenhouse:verkada:5195995007",
+    "greenhouse:waymo:8224900"
   ]
 }
