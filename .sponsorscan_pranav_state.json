@@ -1,9 +1,13 @@
 {
-  "generated_at_utc": "2026-09-30T08:17:05.522606+00:00",
+  "generated_at_utc": "2026-09-30T18:22:52.908612+00:00",
   "active_job_keys": [
     "ashby:snowflake:2a928b93-a5d4-4285-a92c-032fb389faa2",
     "greenhouse:applovin:4705263006",
     "greenhouse:applovin:4705264006",
+    "greenhouse:duolingo:8806114002",
+    "greenhouse:harbingermotors:4518625007",
+    "greenhouse:harbingermotors:5173416007",
+    "greenhouse:harbingermotors:5174694007",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
