@@ -1,9 +1,11 @@
 {
-  "generated_at_utc": "2026-09-30T18:22:52.908612+00:00",
+  "generated_at_utc": "2026-09-30T22:56:01.502212+00:00",
   "active_job_keys": [
     "ashby:snowflake:2a928b93-a5d4-4285-a92c-032fb389faa2",
     "greenhouse:applovin:4705263006",
     "greenhouse:applovin:4705264006",
+    "greenhouse:block:5434157008",
+    "greenhouse:coinbase:8175471",
     "greenhouse:duolingo:8806114002",
     "greenhouse:harbingermotors:4518625007",
     "greenhouse:harbingermotors:5173416007",
@@ -17,6 +19,13 @@
     "greenhouse:roblox:8171506",
     "greenhouse:roku:8158015",
     "greenhouse:twilio:7816159",
+    "greenhouse:xai:4533894007",
+    "greenhouse:xai:4703144007",
+    "greenhouse:xai:4803905007",
+    "greenhouse:xai:5051966007",
+    "greenhouse:xai:5125621007",
+    "greenhouse:xai:5152408007",
+    "greenhouse:xai:5182374007",
     "lever:spotify:65d6caca-6d7c-4049-8256-a128e0e7249e"
   ]
 }
