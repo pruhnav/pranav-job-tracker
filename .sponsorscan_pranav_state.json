@@ -1,12 +1,9 @@
 {
-  "generated_at_utc": "2026-10-01T01:57:52.436590+00:00",
+  "generated_at_utc": "2026-10-01T08:43:07.250840+00:00",
   "active_job_keys": [
     "greenhouse:block:5434157008",
     "greenhouse:coinbase:8175471",
-    "greenhouse:duolingo:8806114002",
     "greenhouse:harbingermotors:4518625007",
-    "greenhouse:harbingermotors:5173416007",
-    "greenhouse:harbingermotors:5174694007",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
