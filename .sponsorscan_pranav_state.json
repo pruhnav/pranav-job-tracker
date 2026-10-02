@@ -1,6 +1,9 @@
 {
-  "generated_at_utc": "2026-10-02T18:19:46.976485+00:00",
+  "generated_at_utc": "2026-10-02T22:54:40.522564+00:00",
   "active_job_keys": [
+    "greenhouse:affirm:8008645003",
+    "greenhouse:affirm:8011590003",
+    "greenhouse:instacart:8249894",
     "greenhouse:pinterest:7838577",
     "greenhouse:pinterest:7838591",
     "greenhouse:pinterest:8140219",
@@ -8,6 +11,7 @@
     "greenhouse:purestorage:8244460",
     "greenhouse:reddit:8243443",
     "greenhouse:reddit:8244082",
+    "greenhouse:reddit:8250125",
     "greenhouse:roblox:8060254",
     "greenhouse:roblox:8097701",
     "greenhouse:roblox:8113334",
@@ -28,6 +32,7 @@
     "greenhouse:scaleai:4696595005",
     "greenhouse:scaleai:4718258005",
     "greenhouse:stripe:8194291",
+    "greenhouse:stripe:8249901",
     "greenhouse:xai:5182374007"
   ]
 }
