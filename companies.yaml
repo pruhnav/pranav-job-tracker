@@ -20,6 +20,8 @@ companies:
     name: DoorDash
   - slug: attentive
     name: Attentive Mobile
+  - slug: vercel
+    name: Vercel
   - slug: instacart
     name: Maplebear
   - slug: samsara
@@ -244,8 +246,6 @@ companies:
     name: Notion Labs
   - slug: linear
     name: Linear Orbit
-  - slug: vercel
-    name: Vercel
   - slug: snowflake
     name: Snowflake Inc.
   - slug: gen-digital
