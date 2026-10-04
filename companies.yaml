@@ -16,20 +16,18 @@ companies:
     name: Airbnb
   - slug: robinhood
     name: Robinhood Markets
-  - slug: doordash
+  - slug: doordashusa
     name: DoorDash
+  - slug: attentive
+    name: Attentive Mobile
   - slug: instacart
     name: Maplebear
   - slug: samsara
     name: Samsara
-  - slug: benchling
-    name: Benchling
   - slug: gitlab
     name: GitLab
   - slug: cloudflare
     name: Cloudflare
-  - slug: linkedin
-    name: LINKEDIN CORPORATION
   - slug: peopletech
     name: People Tech Group, Inc
   - slug: pinterest
@@ -98,8 +96,6 @@ companies:
     name: Twilio, Inc.
   - slug: optimal
     name: Optimal Technologies INC
-  - slug: magicleap
-    name: Magic Leap, Inc.
   - slug: qualtrics
     name: Qualtrics, LLC
   - slug: iris
@@ -144,8 +140,6 @@ companies:
     name: SEER SOLUTIONS INC
   - slug: air
     name: AIR Worldwide Corporation
-  - slug: inovalon
-    name: Inovalon, Inc.
   - slug: torcrobotics
     name: TORC Robotics, Inc.
   - slug: sonatus
@@ -186,16 +180,12 @@ companies:
     name: Harbinger Motors Inc.
   - slug: integrity
     name: Integrity, LLC
-  - slug: fireworksai
-    name: Fireworks.ai, Inc.
   - slug: nuro
     name: Nuro, Inc
   - slug: upgrade
     name: Upgrade, Inc.
   - slug: doubleverify
     name: DoubleVerify Inc.
-  - slug: cerebral
-    name: Cerebral Technologies, Inc.
   - slug: atlasair
     name: Atlas Air, Inc.
   - slug: symphony
@@ -221,14 +211,6 @@ companies:
   - slug: brex
     name: Brex Inc.
   lever:
-  - slug: netflix
-    name: Netflix
-  - slug: plaid
-    name: Plaid
-  - slug: nuro
-    name: Nuro
-  - slug: attentive
-    name: Attentive Mobile
   - slug: palantir
     name: PALANTIR TECHNOLOGIES INC.
   - slug: zoox
@@ -286,8 +268,6 @@ companies:
     name: SPRUCE TECHNOLOGY INC.
   - slug: valon
     name: Valon Technologies, Inc.
-  - slug: r2
-    name: R2 Technologies Corporation
   - slug: thumbtack
     name: Thumbtack, Inc.
   - slug: confluent
@@ -304,6 +284,12 @@ companies:
     name: MAST Technology Services, Inc.
   - slug: plaid
     name: Plaid, Inc.
+  - slug: benchling
+    name: Benchling
+  - slug: fireworks
+    name: Fireworks.ai, Inc.
+  - slug: inovalon
+    name: Inovalon, Inc.
   - slug: xnrgy-climate-systems
     name: XNRGY Climate Systems (US) LLC
   - slug: baseten
@@ -347,6 +333,8 @@ companies:
     name: HP
   - slug: cisco/wd5/cisco_careers
     name: Cisco Systems
+  - slug: netflix/wd108/netflix
+    name: Netflix
 
 # Curated lists that name many employers each. Each entry is owner/repo/path of
 # a markdown file on GitHub. They have no job descriptions, so their postings
