@@ -11,6 +11,7 @@ V5: Application priority and explanation columns
 V6: Daily "new since last run" report and history tracking
 V7: Keeps only jobs posted within the requested number of hours
 V8: Uses database job IDs, broader CS role families, and fit-first ranking
+V9: Remembers reported jobs for 60 days and scores SpeedyApply feed rows
 
 Place this file beside sponsorscan.db, then run after fetch-jobs:
 
@@ -21,7 +22,7 @@ First run:
     All matching jobs are treated as new because no prior snapshot exists.
 
 Later runs:
-    todays_new_jobs.csv contains only jobs that were not present in the previous run.
+    todays_new_jobs.csv contains only jobs not matched in the last 60 days.
 """
 
 import argparse
@@ -32,6 +33,8 @@ import sqlite3
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
+
+from sponsorscan import FEED_SOURCES
 
 DB_PATH = Path("sponsorscan.db")
 DEFAULT_STATE = Path(".sponsorscan_pranav_state.json")
@@ -418,6 +421,7 @@ NON_US = {
     "thailand","vietnam","hong kong","uae","dubai","berlin","toronto","vancouver",
     "london","dublin","paris","amsterdam","munich",
 }
+NON_US_RE = re.compile(r"\b(?:" + "|".join(sorted(map(re.escape, NON_US))) + r")\b")
 
 
 def normalize_company(name):
@@ -546,7 +550,8 @@ def is_us_location(location):
     loc = (location or "").strip().lower()
     if not loc:
         return False
-    if any(term in loc for term in NON_US):
+    # Whole words, so "india" does not match "Indiana" or "Indianapolis".
+    if NON_US_RE.search(loc):
         return False
     if any(term in loc for term in (
         "united states", "usa", "u.s.", "remote - us", "remote, us",
@@ -658,20 +663,41 @@ def priority_label(score, resume_fit, career_score, matched_skill_count):
     return "P4 — Review"
 
 
+# The state remembers every match it has reported, not only the ones present
+# this run. A job missing for a run (its board failed to fetch, or it briefly
+# fell out of the filters) is still remembered when it comes back, so it is not
+# emailed twice. Keys unseen for this long are forgotten to bound the file.
+SEEN_RETENTION_DAYS = 60
+
+
 def load_previous_state(path):
+    """Return a dict mapping job key to the ISO date it was last matched."""
     if not path.exists():
-        return set()
+        return {}
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-        return set(data.get("active_job_keys", []))
     except (json.JSONDecodeError, OSError):
-        return set()
+        return {}
+    if "seen" in data:
+        return dict(data["seen"])
+    # Older state files listed only the keys matched on the last run.
+    today = datetime.now(timezone.utc).date().isoformat()
+    return {key: today for key in data.get("active_job_keys", [])}
 
 
-def save_state(path, keys):
+def update_seen(seen, current_keys, today):
+    """Stamp this run's keys with today and drop those unseen past retention."""
+    cutoff = (today - timedelta(days=SEEN_RETENTION_DAYS)).isoformat()
+    updated = {key: day for key, day in seen.items() if day >= cutoff}
+    updated.update({key: today.isoformat() for key in current_keys})
+    return updated
+
+
+def save_state(path, seen):
     payload = {
+        "version": 2,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "active_job_keys": sorted(keys),
+        "seen": dict(sorted(seen.items())),
     }
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
@@ -705,14 +731,17 @@ def parse_posted_datetime(value):
 
     normalized = raw.replace("Z", "+00:00")
 
-    # Common ISO-like formats.
-    try:
-        parsed = datetime.fromisoformat(normalized)
-        if parsed.tzinfo is None:
-            parsed = parsed.replace(tzinfo=timezone.utc)
-        return parsed.astimezone(timezone.utc)
-    except ValueError:
-        pass
+    # Common ISO-like formats. Every ATS fetcher stores a bare date, which
+    # fromisoformat would read as midnight, so leave that to the date-only
+    # handling below.
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", raw):
+        try:
+            parsed = datetime.fromisoformat(normalized)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            return parsed.astimezone(timezone.utc)
+        except ValueError:
+            pass
 
     formats = (
         "%Y-%m-%d %H:%M:%S",
@@ -767,7 +796,7 @@ def main():
         raise SystemExit("Could not find sponsorscan.db in this folder.")
 
     state_path = Path(args.state)
-    previous_keys = set() if args.reset_state else load_previous_state(state_path)
+    previous_keys = {} if args.reset_state else load_previous_state(state_path)
 
     if args.hours <= 0:
         raise SystemExit("--hours must be greater than 0.")
@@ -832,6 +861,14 @@ def main():
                 counts["masters_required"] += 1
             continue
 
+        # Feed rows come from a curated new grad list but carry no description,
+        # so the title alone rarely shows an entry-level signal, and the
+        # experience, degree and work-authorization checks above saw nothing.
+        is_feed = source in FEED_SOURCES
+        if is_feed:
+            level_signals = level_signals + ["on SpeedyApply new grad list"]
+            level_score = max(level_score, 14)
+
         if not args.include_non_us and not is_us_location(location):
             counts["location"] += 1
             continue
@@ -878,6 +915,8 @@ def main():
         if role_tech_signals:
             reasons.append("technical signals: " + ", ".join(role_tech_signals[:5]))
         reasons.extend(sponsor_signals)
+        if is_feed:
+            reasons.append("title only: no description to check requirements")
 
         results.append({
             "application_priority": priority_label(
@@ -934,7 +973,9 @@ def main():
 
     write_csv(Path(args.out), results, fields)
     write_csv(Path(args.new_out), new_results, fields)
-    save_state(state_path, {row["job_key"] for row in results})
+    save_state(state_path,
+               update_seen(previous_keys, {row["job_key"] for row in results},
+                           now_utc.date()))
 
     print(f"Wrote {len(results):,} jobs posted within the last {args.hours:g} hours to {args.out}")
     print(f"Wrote {len(new_results):,} jobs new since the previous run to {args.new_out}")
