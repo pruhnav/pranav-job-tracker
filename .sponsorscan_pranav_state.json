@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-04T12:12:25.956243+00:00",
+  "generated_at_utc": "2026-10-04T17:29:21.667732+00:00",
   "seen": {
     "greenhouse:affirm:8008645003": "2026-10-04",
     "greenhouse:affirm:8011590003": "2026-10-04",
@@ -31,6 +31,7 @@
     "speedyapply:jobs.ashbyhq.com/apex-technology-inc/3fcb723d-da79-4b36-847b-541d613b19d5": "2026-10-04",
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000153279380-software-engineer-core-infrastructure-moveworks-new-grad-": "2026-10-04",
     "speedyapply:leidos.wd5.myworkdayjobs.com/en-US/external/job/Gaithersburg-MD/Cloud-Infrastructure-Engineer_R-00193640": "2026-10-04",
+    "speedyapply:leidos.wd5.myworkdayjobs.com/en-US/external/job/Lawton-OK/Junior-CEMA-Software-Engineer_R-00193576": "2026-10-04",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04"
   }
 }
