@@ -12,15 +12,23 @@ Two data sources, both of which are structurally durable:
      the employer with no aggregator in between to abandon it.
 
 Usage:
-    python sponsorscan.py load-lca ~/Downloads/LCA_Disclosure_Data_FY2026_Q2.xlsx
+    python sponsorscan.py load-lca --latest
     python sponsorscan.py fetch-jobs
     python sponsorscan.py report --out matches.csv
+
+`companies.yaml` ships with confirmed boards, so a first run can skip
+`discover` and go straight to fetch-jobs. Two commands exist to make setup
+less fiddly:
+
+    python sponsorscan.py setup     # answer a few questions, get a profile
+    python sponsorscan.py doctor    # report which stage needs attention
 
 Run `python sponsorscan.py <command> --help` for per-command options.
 """
 
 import argparse
 import csv
+import html
 import json
 import os
 import re
@@ -28,6 +36,7 @@ import sqlite3
 import sys
 import time
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 import yaml
@@ -79,7 +88,6 @@ CREATE TABLE IF NOT EXISTS employers (
     withdrawn        INTEGER DEFAULT 0,
     titles           TEXT,
     states           TEXT,
-    wage_samples     TEXT,
     lvl1 INTEGER DEFAULT 0,
     lvl2 INTEGER DEFAULT 0,
     lvl3 INTEGER DEFAULT 0,
@@ -98,6 +106,15 @@ CREATE TABLE IF NOT EXISTS jobs (
     fetched_at   TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_jobs_norm ON jobs(company_norm);
+CREATE TABLE IF NOT EXISTS fetched_companies (
+    company_norm TEXT PRIMARY KEY,
+    fetched_at   TEXT
+);
+CREATE TABLE IF NOT EXISTS fetch_failures (
+    board     TEXT PRIMARY KEY,
+    error     TEXT,
+    failed_at TEXT
+);
 CREATE TABLE IF NOT EXISTS probe_cache (
     provider   TEXT,
     slug       TEXT,
@@ -116,6 +133,9 @@ def connect():
     for col in ("lvl1", "lvl2", "lvl3", "lvl4"):
         if col not in have:
             con.execute(f"ALTER TABLE employers ADD COLUMN {col} INTEGER DEFAULT 0")
+    # A Workday guess is a tenant name; the board it resolves to is stored here.
+    if "resolved" not in {r[1] for r in con.execute("PRAGMA table_info(probe_cache)")}:
+        con.execute("ALTER TABLE probe_cache ADD COLUMN resolved TEXT")
     con.commit()
     return con
 
@@ -129,8 +149,6 @@ WANTED = {
     "status": ["CASE_STATUS"],
     "title": ["JOB_TITLE", "SOC_TITLE"],
     "state": ["WORKSITE_STATE", "WORKSITE_STATE_1", "EMPLOYER_STATE"],
-    "wage": ["WAGE_RATE_OF_PAY_FROM", "WAGE_RATE_OF_PAY_FROM_1"],
-    "wage_unit": ["WAGE_UNIT_OF_PAY", "WAGE_UNIT_OF_PAY_1"],
     # Prevailing wage level (I-IV). Under the FY2027 weighted selection rule,
     # petitions filed at Level III/IV get better lottery odds, so an employer's
     # typical level directly affects your chances, not just your pay.
@@ -170,28 +188,67 @@ def _iter_rows(path):
                 yield row
 
 
-def _annual_wage(value, unit):
+def _resolve_latest_lca():
+    """Find the newest LCA disclosure file linked from the DOL page.
+
+    Returns the URL, or exits with the manual instructions. A DOL redesign is
+    the expected failure here, so it must not surface as a traceback.
+    """
+    import onboarding
+
+    print(f"Looking for the newest disclosure file on {onboarding.DOL_PERFORMANCE_PAGE}")
     try:
-        v = float(str(value).replace(",", "").replace("$", ""))
-    except (TypeError, ValueError):
-        return None
-    u = (str(unit) or "").strip().lower()
-    mult = {"year": 1, "hour": 2080, "week": 52, "bi-weekly": 26,
-            "biweekly": 26, "month": 12}.get(u, 1)
-    v *= mult
-    return v if 10_000 < v < 2_000_000 else None
+        r = requests.get(onboarding.DOL_PERFORMANCE_PAGE, headers=UA, timeout=60)
+        r.raise_for_status()
+        url = onboarding.latest_lca_link(r.text, onboarding.DOL_PERFORMANCE_PAGE)
+    except requests.RequestException as exc:
+        url = None
+        print(f"Could not reach the DOL site: {exc}")
+
+    if not url:
+        raise SystemExit(
+            "Could not resolve a disclosure link automatically.\n"
+            f"Open {onboarding.DOL_PERFORMANCE_PAGE}, download the most recent\n"
+            "'LCA Programs (H-1B, H-1B1, E-3)' file, then run:\n"
+            "  python sponsorscan.py load-lca <downloaded file> --replace")
+
+    print(f"Found {url}")
+    if sys.stdin.isatty():
+        reply = input("Download this file? (Y/n): ").strip().lower()
+        if reply.startswith("n"):
+            raise SystemExit("Cancelled.")
+    return url
 
 
 def cmd_load_lca(args):
-    src = args.path
+    if args.latest and args.path:
+        raise SystemExit(
+            "argument --latest: not allowed with an explicit path. "
+            "Pass one or the other.")
+    if not args.latest and not args.path:
+        raise SystemExit(
+            "Provide a path to a disclosure file, or pass --latest to resolve "
+            "the newest one from the DOL site.")
+
+    src = _resolve_latest_lca() if args.latest else args.path
     if src.startswith(("http://", "https://")):
-        local = os.path.basename(urllib.parse.urlparse(src).path) or "lca_download.xlsx"
+        import onboarding
+        local = onboarding.local_filename_for(src)
         print(f"Downloading {src} -> {local} (this file is typically 100-400 MB)")
-        with requests.get(src, stream=True, headers=UA, timeout=120) as r:
-            r.raise_for_status()
-            with open(local, "wb") as fh:
-                for chunk in r.iter_content(1 << 20):
-                    fh.write(chunk)
+        try:
+            with requests.get(src, stream=True, headers=UA, timeout=120) as r:
+                r.raise_for_status()
+                with open(local, "wb") as fh:
+                    for chunk in r.iter_content(1 << 20):
+                        fh.write(chunk)
+        except requests.RequestException as exc:
+            if os.path.exists(local):
+                os.remove(local)  # a partial file would load as a short dataset
+            # Nothing has been deleted yet, so an existing database is intact.
+            raise SystemExit(
+                f"Could not download {src}: {exc}\n"
+                "The DOL site blocks some networks, including GitHub's runners. "
+                "Download the file in a browser and pass its local path instead.")
         src = local
 
     if not os.path.exists(src):
@@ -228,7 +285,7 @@ def cmd_load_lca(args):
 
         rec = agg.setdefault(key, {
             "display": str(emp).strip(), "certified": 0, "denied": 0,
-            "withdrawn": 0, "titles": {}, "states": {}, "wages": [],
+            "withdrawn": 0, "titles": {}, "states": {},
             "lvl": {1: 0, 2: 0, 3: 0, 4: 0},
         })
 
@@ -256,10 +313,6 @@ def cmd_load_lca(args):
         if lvl_n:
             rec["lvl"][lvl_n] += 1
 
-        w = _annual_wage(get("wage"), get("wage_unit"))
-        if w and len(rec["wages"]) < 400:
-            rec["wages"].append(w)
-
     print(f"Read {n:,} rows, {len(agg):,} distinct employers.")
 
     payload = []
@@ -270,16 +323,16 @@ def cmd_load_lca(args):
             key, rec["display"], rec["certified"], rec["denied"], rec["withdrawn"],
             json.dumps([t for t, _ in top_titles]),
             json.dumps([s for s, _ in top_states]),
-            json.dumps(sorted(rec["wages"])[:200]),
             rec["lvl"][1], rec["lvl"][2], rec["lvl"][3], rec["lvl"][4],
         ))
 
     con.executemany(
         "INSERT OR REPLACE INTO employers "
         "(employer_norm, employer_display, certified, denied, withdrawn, titles, states, "
-        " wage_samples, lvl1, lvl2, lvl3, lvl4) "
-        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", payload)
+        " lvl1, lvl2, lvl3, lvl4) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?)", payload)
     con.commit()
+    con.close()
     print(f"Loaded {len(payload):,} employers into {DB_PATH}")
 
 
@@ -288,6 +341,31 @@ def cmd_load_lca(args):
 # NOTE: every function in this section makes a live HTTP call and could NOT be
 # tested in the environment where this was written. If a provider changes its
 # response shape, this is the first place to look.
+
+_TAG_RE = re.compile(r"<[^>]+>")
+_BLOCK_RE = re.compile(r"(?i)<\s*(?:br|/p|/div|/li|/tr|/h[1-6])\s*/?>")
+_SPACE_RUN = re.compile(r"[ \t\r\f\v]+")
+_BLANK_RUN = re.compile(r"\n\s*\n+")
+
+
+def html_to_text(raw):
+    """Flatten ATS markup to prose.
+
+    Greenhouse serves `content` as HTML inside an escaped JSON string, so a
+    posting arrives looking like `&lt;p&gt;We don&#39;t sponsor&lt;/p&gt;`.
+    The filters downstream are word-boundary regexes over prose and need real
+    text. Unescape, turn block tags into newlines so that clause-bounded
+    patterns cannot run across list items, then drop the remaining tags.
+    """
+    if not raw:
+        return ""
+    text = html.unescape(str(raw))
+    text = _BLOCK_RE.sub("\n", text)
+    text = _TAG_RE.sub(" ", text)
+    text = html.unescape(text)
+    text = _SPACE_RUN.sub(" ", text)
+    return _BLANK_RUN.sub("\n", text).strip()
+
 
 def _get_json(url, timeout=25):
     r = requests.get(url, headers=UA, timeout=timeout)
@@ -305,8 +383,10 @@ def fetch_greenhouse(slug):
             "job_key": f"greenhouse:{slug}:{j.get('id')}",
             "source": "greenhouse", "title": j.get("title", ""),
             "location": loc, "url": j.get("absolute_url", ""),
-            "posted": (j.get("updated_at") or "")[:10],
-            "description": j.get("content", "") or "",
+            # updated_at moves whenever the employer bulk-edits its board, so
+            # a years-old posting would read as new. first_published does not.
+            "posted": (j.get("first_published") or j.get("updated_at") or "")[:10],
+            "description": html_to_text(j.get("content", "")),
         })
     return out
 
@@ -324,8 +404,10 @@ def fetch_lever(slug):
             "url": j.get("hostedUrl", ""),
             "posted": time.strftime("%Y-%m-%d", time.gmtime((j.get("createdAt") or 0) / 1000))
                       if j.get("createdAt") else "",
-            "description": (j.get("descriptionPlain") or "") +
-                           " " + json.dumps(j.get("lists", [])),
+            "description": html_to_text(
+                (j.get("descriptionPlain") or "") + " " +
+                " ".join(str(d.get("text", "")) + " " + str(d.get("content", ""))
+                         for d in (j.get("lists") or []))),
         })
     return out
 
@@ -341,21 +423,178 @@ def fetch_ashby(slug):
             "location": j.get("location", "") or "",
             "url": j.get("jobUrl", "") or j.get("applyUrl", ""),
             "posted": (j.get("publishedAt") or "")[:10],
-            "description": j.get("descriptionPlain", "") or "",
+            "description": html_to_text(j.get("descriptionPlain", "")),
         })
     return out
 
 
-FETCHERS = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby}
+# Workday hosts most large employers, which are most of the DOL filers. Its list
+# endpoint gives titles and a relative "Posted 3 Days Ago", but no description,
+# and the report needs the description for its disqualifier checks. So the list
+# is paged in full (cheap) and details are fetched only for recent postings.
+WORKDAY_MAX_AGE_DAYS = 2  # "Posted 2 Days Ago" can still be inside a 48-hour report
+WORKDAY_PAGE = 20          # the API rejects anything larger
+WORKDAY_DETAIL_DELAY = 0.1  # per request, per worker
+WORKDAY_WORKERS = 4
+_WORKDAY_AGE = re.compile(r"posted\s+(today|yesterday|(\d+)\+?\s+days?\s+ago)", re.I)
+
+
+def workday_age_days(posted_on):
+    """Days since posting from Workday's "Posted N Days Ago" text, or None."""
+    m = _WORKDAY_AGE.search(posted_on or "")
+    if not m:
+        return None
+    word = m.group(1).lower()
+    if word == "today":
+        return 0
+    if word == "yesterday":
+        return 1
+    return int(m.group(2))
+
+
+def fetch_workday(slug, max_age_days=WORKDAY_MAX_AGE_DAYS):
+    """slug is 'tenant/wdN/site', e.g. 'adobe/wd5/external_experienced'."""
+    parts = slug.split("/")
+    if len(parts) != 3:
+        raise ValueError(f"workday slug must be tenant/wdN/site, got '{slug}'")
+    tenant, wd, site = parts
+    api = f"https://{tenant}.{wd}.myworkdayjobs.com/wday/cxs/{tenant}/{site}"
+    headers = {**UA, "Accept": "application/json"}
+
+    def list_page(offset):
+        r = requests.post(f"{api}/jobs", headers=headers, timeout=25, json={
+            "appliedFacets": {}, "limit": WORKDAY_PAGE, "offset": offset,
+            "searchText": ""})
+        r.raise_for_status()
+        time.sleep(WORKDAY_DETAIL_DELAY)
+        return r.json()
+
+    def detail(path):
+        try:
+            return _get_json(f"{api}{path}").get("jobPostingInfo") or {}
+        except (requests.RequestException, ValueError) as exc:
+            return exc
+        finally:
+            time.sleep(WORKDAY_DETAIL_DELAY)
+
+    # The list has no usable sort order, so every page is read. The first page
+    # gives the total; the rest go through a small pool, since a big employer
+    # lists thousands of jobs at 20 a page.
+    first = list_page(0)
+    total = first.get("total") or 0
+    with ThreadPoolExecutor(WORKDAY_WORKERS) as pool:
+        pages = [first] + list(pool.map(list_page, range(WORKDAY_PAGE, total, WORKDAY_PAGE)))
+
+        # Ordering is unstable between requests, so a job can appear twice.
+        recent = {}
+        for page in pages:
+            for j in page.get("jobPostings") or []:
+                age = workday_age_days(j.get("postedOn"))
+                if age is not None and age > max_age_days:
+                    continue
+                recent.setdefault(j.get("externalPath", ""), j)
+        details = list(pool.map(detail, recent))
+
+    out, last_error = [], None
+    for (path, j), info in zip(recent.items(), details):
+        if isinstance(info, Exception):
+            last_error = info
+            continue
+        places = [info.get("location") or ""] + list(info.get("additionalLocations") or [])
+        location = "; ".join(p for p in places if p)
+        country = (info.get("country") or {}).get("descriptor")
+        if country:
+            location = f"{location}, {country}" if location else country
+        out.append({
+            "job_key": f"workday:{slug}:{info.get('jobReqId') or j.get('externalPath')}",
+            "source": "workday", "title": info.get("title") or j.get("title", ""),
+            "location": location, "url": info.get("externalUrl", ""),
+            "posted": (info.get("startDate") or "")[:10],
+            "description": html_to_text(info.get("jobDescription", "")),
+        })
+
+    # One bad detail is skipped; all of them failing means the board is down,
+    # and fetch-jobs must record that rather than an empty board.
+    if recent and not out:
+        raise last_error
+    return out
+
+
+FETCHERS = {"greenhouse": fetch_greenhouse, "lever": fetch_lever, "ashby": fetch_ashby,
+            "workday": fetch_workday}
+
+
+# SpeedyApply's college job lists are markdown tables regenerated daily from a
+# private database, so the tables are the only public copy. A row has company,
+# title, location, an apply link and an age in days, but no description, so the
+# report's disqualifier and skill checks see the title alone.
+FEED_SOURCES = {"speedyapply"}
+_FEED_ROW = re.compile(r"^\|(.+)\|\s*(\d+)d\s*\|\s*$")
+_HREF = re.compile(r'href="([^"]+)"')
+_STRONG = re.compile(r"<strong>(.*?)</strong>", re.S)
+
+
+def _feed_url(url):
+    """Lowercased host and path without query or trailing slash, for dedupe."""
+    parts = urllib.parse.urlsplit((url or "").strip())
+    return f"{parts.netloc.lower()}{parts.path.rstrip('/')}"
+
+
+def fetch_speedyapply(slug, today=None):
+    """slug is 'owner/repo/path', e.g. 'speedyapply/2027-SWE-College-Jobs/README.md'."""
+    parts = slug.split("/", 2)
+    if len(parts) != 3:
+        raise ValueError(f"speedyapply slug must be owner/repo/path, got '{slug}'")
+    owner, repo, path = parts
+    r = requests.get(f"https://raw.githubusercontent.com/{owner}/{repo}/HEAD/{path}",
+                     headers=UA, timeout=25)
+    r.raise_for_status()
+
+    # Ages count from when the tables were generated, which is close enough
+    # to the fetch time for a day-granular posted date.
+    today = today or time.time()
+    out = []
+    for line in r.text.splitlines():
+        m = _FEED_ROW.match(line.strip())
+        if not m:
+            continue
+        cells = [c.strip() for c in m.group(1).split("|")]
+        company = _STRONG.search(cells[0]) if cells else None
+        link = _HREF.search(cells[-1]) if cells else None
+        if len(cells) < 4 or not company or not link:
+            continue
+        url = html.unescape(link.group(1))
+        out.append({
+            "job_key": f"speedyapply:{_feed_url(url)}",
+            "source": "speedyapply",
+            "company": html.unescape(_STRONG.sub(r"\1", company.group(1))).strip(),
+            "title": html.unescape(cells[1]),
+            "location": html.unescape(re.sub(r"(?i)<br\s*/?>", "; ", cells[2])),
+            "url": url,
+            "posted": time.strftime("%Y-%m-%d",
+                                    time.gmtime(today - int(m.group(2)) * 86400)),
+            "description": "",
+        })
+
+    # A list that renders but yields no rows means the table format changed,
+    # which must show up as a failed board rather than a quiet empty one.
+    if not out:
+        raise ValueError(f"no job rows found in {path}; the table format may have changed")
+    return out
+
+
+FEED_FETCHERS = {"speedyapply": fetch_speedyapply}
 
 
 def cmd_fetch_jobs(args):
-    with open(args.companies) as fh:
+    with open(args.companies, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
 
     con = connect()
     if args.replace:
         con.execute("DELETE FROM jobs")
+        con.execute("DELETE FROM fetched_companies")
+        con.execute("DELETE FROM fetch_failures")
 
     total, failed = 0, []
     for provider, entries in (cfg.get("companies") or {}).items():
@@ -370,9 +609,17 @@ def cmd_fetch_jobs(args):
             else:
                 slug, display = entry, entry
             try:
-                jobs = fetcher(slug)
+                if provider == "workday":
+                    jobs = fetcher(slug, max_age_days=args.workday_days)
+                else:
+                    jobs = fetcher(slug)
             except Exception as exc:
                 failed.append(f"{provider}/{slug}: {exc}")
+                # Read by the notification email, so a dead board is noticed.
+                con.execute("INSERT OR REPLACE INTO fetch_failures VALUES (?, ?, ?)",
+                            (f"{provider}/{slug}", str(exc)[:200],
+                             time.strftime("%Y-%m-%d %H:%M")))
+                con.commit()
                 continue
             rows = [(
                 j["job_key"], j["source"], display, norm_employer(display),
@@ -383,12 +630,64 @@ def cmd_fetch_jobs(args):
                 "INSERT OR REPLACE INTO jobs (job_key, source, company, company_norm, "
                 "title, location, url, posted, description, fetched_at) "
                 "VALUES (?,?,?,?,?,?,?,?,?,?)", rows)
+            # The report baselines employers it has not tracked before. A board
+            # that answered with no postings is tracked all the same, so its
+            # first real opening is reported rather than silenced.
+            con.execute("DELETE FROM fetch_failures WHERE board = ?",
+                        (f"{provider}/{slug}",))
+            con.execute(
+                "INSERT OR REPLACE INTO fetched_companies VALUES (?, ?)",
+                (norm_employer(display), time.strftime("%Y-%m-%d %H:%M")))
             con.commit()
             total += len(rows)
             print(f"  {display:<28} {provider:<11} {len(rows):>4} postings")
             time.sleep(args.delay)
 
-    print(f"\n{total:,} postings stored with provider-specific job keys.")
+    # Feeds list many employers each, so they run after the boards: a company
+    # whose own board was fetched keeps the board's copy, which has the
+    # description, and a posting already stored under the same URL is skipped.
+    boards = {r[0] for r in con.execute("SELECT company_norm FROM fetched_companies")}
+    urls = {_feed_url(r[0]) for r in con.execute("SELECT url FROM jobs") if r[0]}
+    for provider, entries in (cfg.get("feeds") or {}).items():
+        fetcher = FEED_FETCHERS.get(provider)
+        if not fetcher:
+            print(f"  ! unknown feed '{provider}', skipping")
+            continue
+        for slug in entries or []:
+            try:
+                jobs = fetcher(slug)
+            except Exception as exc:
+                failed.append(f"{provider}/{slug}: {exc}")
+                con.execute("INSERT OR REPLACE INTO fetch_failures VALUES (?, ?, ?)",
+                            (f"{provider}/{slug}", str(exc)[:200],
+                             time.strftime("%Y-%m-%d %H:%M")))
+                con.commit()
+                continue
+            rows = []
+            for j in jobs:
+                company_norm = norm_employer(j["company"])
+                if company_norm in boards or _feed_url(j["url"]) in urls:
+                    continue
+                urls.add(_feed_url(j["url"]))
+                rows.append((
+                    j["job_key"], j["source"], j["company"], company_norm,
+                    j["title"], j["location"], j["url"], j["posted"],
+                    j["description"], time.strftime("%Y-%m-%d %H:%M"),
+                ))
+            con.executemany(
+                "INSERT OR REPLACE INTO jobs (job_key, source, company, company_norm, "
+                "title, location, url, posted, description, fetched_at) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?)", rows)
+            con.execute("DELETE FROM fetch_failures WHERE board = ?",
+                        (f"{provider}/{slug}",))
+            con.commit()
+            total += len(rows)
+            print(f"  {slug:<28} {provider:<11} {len(rows):>4} postings "
+                  f"({len(jobs) - len(rows)} already on a fetched board)")
+            time.sleep(args.delay)
+
+    con.close()
+    print(f"\n{total:,} postings stored.")
     if failed:
         print(f"{len(failed)} board(s) failed. Usually a wrong slug:")
         for f in failed:
@@ -444,14 +743,23 @@ def slug_candidates(name):
 
 
 def probe(provider, slug, timeout=12):
-    """Return (ok, n_jobs). A real board with zero openings still counts as ok."""
+    """Return (ok, n_jobs). A real board with zero openings still counts as ok.
+
+    `ok` is True (the board exists), False (it definitively does not), or None
+    (could not tell). The None case matters because a 429 or a read timeout
+    says nothing about the slug: recording it as False would write off a real
+    employer until the database is rebuilt. Only definitive answers are cached.
+    """
     url = PROBE_URLS[provider].format(slug=slug)
     try:
         r = requests.get(url, headers=UA, timeout=timeout)
     except requests.RequestException:
+        return None, 0
+    if r.status_code in (404, 410):
         return False, 0
     if r.status_code != 200:
-        return False, 0
+        # 429, 5xx, or a redirect to a login page: unknown, not a miss.
+        return None, 0
     try:
         data = r.json()
     except ValueError:
@@ -463,6 +771,68 @@ def probe(provider, slug, timeout=12):
     return isinstance(data, dict) and "jobs" in data, len(data.get("jobs", []))
 
 
+# Workday data centers, most common first. Every other wdN host is absent from
+# DNS. A slug is tenant/wdN/site: the tenant is guessable from the employer
+# name, the data center is found by trying each host, and the site is guessed
+# from names employers commonly use. Site names are case-insensitive.
+WORKDAY_HOSTS = ("wd1", "wd5", "wd12", "wd3", "wd10", "wd103", "wd108", "wd102",
+                 "wd105", "wd107", "wd109", "wd501", "wd502", "wd503", "wd504")
+WORKDAY_SITES = ("external", "careers", "externalcareers", "external_careers",
+                 "externalcareersite", "external_career_site", "external_career",
+                 "external_experienced", "corporatecareers", "ext", "jobs",
+                 "{t}", "{t}careers", "{t}_careers", "{t}external", "{t}_external",
+                 "{t}externalcareersite", "{t}_external_career_site", "{n}", "{n}_careers")
+
+
+def _workday_status(tenant, wd, site, timeout):
+    """(status code or None, total jobs) for one tenant/wd/site guess."""
+    url = f"https://{tenant}.{wd}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs"
+    try:
+        r = requests.post(url, headers={**UA, "Accept": "application/json"},
+                          timeout=timeout, json={"appliedFacets": {}, "limit": 1,
+                                                 "offset": 0, "searchText": ""})
+    except requests.RequestException:
+        return None, 0
+    total = 0
+    if r.status_code == 200:
+        try:
+            total = r.json().get("total") or 0
+        except ValueError:
+            return None, 0
+    return r.status_code, total
+
+
+def find_workday_board(tenant, name, timeout=12):
+    """Return (ok, slug, n_jobs) for a Workday tenant guess.
+
+    ok is True with the full slug on a hit. It is False with slug None when no
+    data center knows the tenant, and False with a partial "tenant/wdN" slug
+    when the tenant exists but none of the common site names match, so the
+    caller can report it for a manual lookup. It is None when an error
+    (429, 5xx, timeout) made the answer uncertain, which must not be cached.
+    """
+    for wd in WORKDAY_HOSTS:
+        status, total = _workday_status(tenant, wd, "external", timeout)
+        if status == 422:
+            continue            # unknown tenant on this data center
+        if status == 200:
+            return True, f"{tenant}/{wd}/external", total
+        if status != 404:
+            return None, None, 0
+
+        words = [t for t in norm_employer(name).split() if t not in _SLUG_DROP]
+        sites = dict.fromkeys(s.format(t=tenant, n="_".join(words))
+                              for s in WORKDAY_SITES[1:])
+        for site in sites:
+            status, total = _workday_status(tenant, wd, site, timeout)
+            if status == 200:
+                return True, f"{tenant}/{wd}/{site}", total
+            if status != 404:
+                return None, None, 0
+        return False, f"{tenant}/{wd}", 0
+    return False, None, 0
+
+
 DEFAULT_ROLES = (
     "software", "developer", "engineer", "application", "platform", "cloud",
     "infrastructure", "devops", "site reliability", "quality assurance",
@@ -472,6 +842,74 @@ DEFAULT_ROLES = (
     "systems", "web", "mobile", "integration", "research", "programmer",
     "statistician", "analyst",
 )
+
+
+def _discover_workday(con, candidates, args):
+    """Search Workday for the heavier filers. Returns {display: [(slug, n)]}.
+
+    Each tenant guess can cost a request per data center, so this is opt-in
+    and limited to employers with at least --workday-min-certified filings,
+    which is where Workday users are. Every definite answer is cached.
+    """
+    from concurrent.futures import as_completed
+
+    targets = [(d, c) for _, d, c in candidates if c >= args.workday_min_certified]
+    cached = {slug: (ok, n, resolved) for slug, ok, n, resolved in con.execute(
+        "SELECT slug, ok, n_jobs, resolved FROM probe_cache WHERE provider = 'workday'")}
+
+    pending = {}
+    for display, certified in targets:
+        for tenant in slug_candidates(display):
+            if "-" in tenant or tenant in cached:
+                continue  # Workday tenants have no hyphens
+            if tenant not in pending or certified > pending[tenant][1]:
+                pending[tenant] = (display, certified)
+
+    print(f"\nWorkday: {len(targets):,} employers with >= {args.workday_min_certified} "
+          f"certified LCAs, {len(pending):,} tenant guesses to try "
+          f"({len(cached):,} already cached).")
+    transient = 0
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        futs = {pool.submit(find_workday_board, t, d): (t, d) for t, (d, _) in pending.items()}
+        try:
+            for fut in as_completed(futs):
+                tenant, display = futs[fut]
+                try:
+                    ok, board, n = fut.result()
+                except Exception:
+                    ok, board, n = None, None, 0
+                if ok is None:
+                    transient += 1
+                    continue
+                con.execute(
+                    "INSERT OR REPLACE INTO probe_cache VALUES (?,?,?,?,?,?)",
+                    ("workday", tenant, int(ok), n, time.strftime("%Y-%m-%d"), board))
+                con.commit()
+                cached[tenant] = (ok, n, board)
+                if ok:
+                    print(f"  HIT workday     {board:<40} {n:>4} jobs   ({display})")
+        except KeyboardInterrupt:
+            print("\nInterrupted. Workday answers so far are cached.")
+            pool.shutdown(wait=False, cancel_futures=True)
+    if transient:
+        print(f"  {transient:,} Workday search(es) failed transiently and were left "
+              f"uncached. Re-run to retry them.")
+
+    found, partial = {}, []
+    for display, _ in targets:
+        for tenant in slug_candidates(display):
+            ok, n, board = cached.get(tenant, (False, 0, None))
+            if ok:
+                found.setdefault(display, []).append((board, n))
+            elif board:
+                partial.append((board, display))
+    if partial:
+        print("  Workday tenants found, but not their site name. Open the employer's "
+              "careers page, copy the part after myworkdayjobs.com/, and add "
+              "tenant/wdN/site to companies.yaml by hand:")
+        for board, display in sorted(set(partial)):
+            print(f"    {board:<24} {display}")
+    return found
 
 
 def cmd_discover(args):
@@ -515,18 +953,24 @@ def cmd_discover(args):
     cache = {(p, s): (ok, n) for p, s, ok, n in con.execute(
         "SELECT provider, slug, ok, n_jobs FROM probe_cache")}
 
-    tasks = []
+    # Two employers can generate the same slug guess ("Acme Labs" and "Acme
+    # Laboratories" both reduce to "acme"). One task per (provider, slug),
+    # attributed to the heaviest filer, avoids probing the same URL twice.
+    pending = {}
     for norm, display, certified in candidates:
         for slug in slug_candidates(display):
             for provider in PROBE_URLS:
                 if (provider, slug) in cache:
                     continue
-                tasks.append((provider, slug, display, certified))
+                prev = pending.get((provider, slug))
+                if prev is None or certified > prev[1]:
+                    pending[(provider, slug)] = (display, certified)
+    tasks = [(p, s, d, c) for (p, s), (d, c) in pending.items()]
 
     print(f"{len(tasks):,} probes to run "
           f"({len(cache):,} already cached). Ctrl-C is safe, results are saved as they land.")
 
-    found, done = {}, 0
+    found, done, transient = {}, 0, 0
     if tasks:
         from concurrent.futures import ThreadPoolExecutor, as_completed
         with ThreadPoolExecutor(max_workers=args.workers) as pool:
@@ -539,8 +983,14 @@ def cmd_discover(args):
                     except Exception:
                         ok, n = False, 0
                     done += 1
+                    if ok is None:
+                        # Not a definitive answer. Left uncached so that the
+                        # next run retries instead of writing the employer off.
+                        transient += 1
+                        continue
                     con.execute(
-                        "INSERT OR REPLACE INTO probe_cache VALUES (?,?,?,?,?)",
+                        "INSERT OR REPLACE INTO probe_cache "
+                        "(provider, slug, ok, n_jobs, checked_at) VALUES (?,?,?,?,?)",
                         (provider, slug, int(ok), n, time.strftime("%Y-%m-%d")))
                     if ok:
                         cache[(provider, slug)] = (True, n)
@@ -552,6 +1002,12 @@ def cmd_discover(args):
                 print("\nInterrupted, saving what we have.")
             finally:
                 con.commit()
+    if transient:
+        print(f"  {transient:,} probe(s) failed transiently (timeout, rate limit "
+              f"or server error) and were left uncached. Re-run to retry them.")
+
+    workday = _discover_workday(con, candidates, args) \
+        if getattr(args, "workday", False) else {}
 
     # Rebuild the company list from every cached hit that maps to a candidate.
     by_display = {}
@@ -563,15 +1019,26 @@ def cmd_discover(args):
                     prev = by_display.get(display)
                     if prev is None or n > prev[2]:
                         by_display[display] = (provider, slug, n, certified)
+        for board, n in workday.get(display, []):
+            prev = by_display.get(display)
+            if prev is None or n > prev[2]:
+                by_display[display] = ("workday", board, n, certified)
 
-    existing = {}
-    if args.merge and os.path.exists(args.out):
-        with open(args.out) as fh:
-            existing = (yaml.safe_load(fh) or {}).get("companies") or {}
+    existing, feeds = {}, {}
+    if os.path.exists(args.out):
+        with open(args.out, encoding="utf-8") as fh:
+            cfg = yaml.safe_load(fh) or {}
+        # Feeds are not boards discover can find, so they survive a rebuild.
+        feeds = cfg.get("feeds") or {}
+        if args.merge:
+            existing = cfg.get("companies") or {}
 
-    merged = {p: list(existing.get(p) or []) for p in PROBE_URLS}
+    # Providers discover cannot probe, such as Workday, are carried over as-is.
+    merged = {p: list(v or []) for p, v in existing.items()}
+    for p in (*PROBE_URLS, "workday"):
+        merged.setdefault(p, [])
     seen = {p: {(e.get("slug") if isinstance(e, dict) else e) for e in merged[p]}
-            for p in PROBE_URLS}
+            for p in merged}
     added = 0
     for display, (provider, slug, n, certified) in sorted(
             by_display.items(), key=lambda kv: -kv[1][3]):
@@ -581,7 +1048,7 @@ def cmd_discover(args):
         seen[provider].add(slug)
         added += 1
 
-    with open(args.out, "w") as fh:
+    with open(args.out, "w", encoding="utf-8") as fh:
         fh.write("# Generated by `sponsorscan.py discover`. Hand edits to `name:`\n"
                  "# are preserved on re-run with --merge (the default).\n"
                  "#\n"
@@ -589,9 +1056,12 @@ def cmd_discover(args):
                  "# probe, so a listed board definitely exists. It is still possible for\n"
                  "# a guess to land on a DIFFERENT company with a similar name. If a\n"
                  "# company's postings look wrong, delete its line.\n\n")
-        yaml.safe_dump({"companies": {p: merged[p] for p in PROBE_URLS if merged[p]}},
-                       fh, sort_keys=False, default_flow_style=False)
+        out = {"companies": {p: v for p, v in merged.items() if v}}
+        if feeds:
+            out["feeds"] = feeds
+        yaml.safe_dump(out, fh, sort_keys=False, default_flow_style=False)
 
+    con.close()
     total = sum(len(v) for v in merged.values())
     print(f"\n{len(by_display):,} employers matched to a live board. "
           f"Added {added:,} new; {total:,} companies now in {args.out}.")
@@ -603,12 +1073,14 @@ def cmd_discover(args):
 # Phrases that mean you are excluded regardless of anything else. Checked against
 # the posting body. This is the filter that actually matters while on OPT.
 DISQUALIFIERS = [
-    # Any negation followed by "sponsor" within the same sentence. Catches the
+    # Any negation followed by "sponsor" within the same clause. Catches the
     # long tail of phrasings ("do not offer", "does not provide", "unable to",
     # "without", "no sponsorship available", "not now or in the future require")
-    # without needing a pattern per variant. Bounded by [^.] so it cannot leak
-    # across a sentence boundary and match an unrelated negation.
-    r"\b(?:not|no|non|unable|without|cannot|can't|won't|unwilling)\b[^.]{0,60}?sponsor",
+    # without needing a pattern per variant. A sentence, a semicolon and a line
+    # break all end the clause, so that an unrelated negation earlier in the
+    # sentence cannot reach the word: "There is no cost to relocate; we sponsor
+    # visas" is not a refusal.
+    r"\b(?:not|no|non|unable|without|cannot|can't|won't|unwilling)\b[^.;\n]{0,60}?sponsor",
     r"\bmust be (?:a |an )?(?:u\.?\s?s\.?|united states)\s?(?:citizen|person|national)\b",
     r"\b(?:u\.?\s?s\.?|united states)\s?citizenship (?:is )?required\b",
     r"\bsecurity clearance\b",
@@ -630,6 +1102,19 @@ SENIOR_TITLE = re.compile(
 ENTRY_TITLE = re.compile(
     r"\b(intern|internship|new ?grad|new graduate|university grad|recent grad|"
     r"early career|entry.level|junior|jr\.?|associate|apprentice|i{1,2}\b)\b", re.I)
+
+# Wording that marks a posting as early career even when the title also has a
+# senior word, as in "Program Manager Intern". Stricter than ENTRY_TITLE, which
+# includes "associate" and a bare "II" and would let "Senior Associate" through.
+EARLY_CAREER_TITLE = re.compile(
+    r"\b(intern|internship|new ?grad|new graduate|university grad|recent grad|"
+    r"early career|entry.level|apprentice(?:ship)?)\b", re.I)
+
+
+def is_senior_title(title):
+    title = title or ""
+    return bool(SENIOR_TITLE.search(title)) and not EARLY_CAREER_TITLE.search(title)
+
 
 DISQ_RE = [re.compile(p, re.I) for p in DISQUALIFIERS]
 POS_RE = [re.compile(p, re.I) for p in SPONSOR_POSITIVE]
@@ -660,7 +1145,7 @@ def match_employer(company_norm, index, keys, cutoff):
     """Exact key match, then fuzzy fallback."""
     if company_norm in index:
         return company_norm, 100
-    if not HAVE_RAPIDFUZZ or not keys:
+    if not HAVE_RAPIDFUZZ or not keys or cutoff <= 0:
         return None, 0
     hit = rf_process.extractOne(
         company_norm, keys, scorer=rf_fuzz.token_set_ratio, score_cutoff=cutoff)
@@ -690,7 +1175,7 @@ def cmd_report(args):
             dropped += 1
             continue
 
-        if not args.include_senior and SENIOR_TITLE.search(title or ""):
+        if not args.include_senior and is_senior_title(title):
             continue
 
         score, why = 0, []
@@ -740,6 +1225,7 @@ def cmd_report(args):
             "lca_denied_withdrawn_rate": emp["trouble_rate"] if emp else None,
         })
 
+    con.close()
     results.sort(key=lambda r: (-r["score"], r["company"]))
 
     if args.out:
@@ -760,6 +1246,49 @@ def cmd_report(args):
         print(f"      {r['url']}\n")
 
 
+# ----------------------------------------------------------------------- setup
+
+def cmd_setup(args):
+    """Ask a few questions and write a valid profile."""
+    import onboarding
+
+    print("This writes a candidate profile. Blank answers take the default.\n")
+    try:
+        path = onboarding.run_setup(onboarding.console_ask,
+                                    profiles_dir=args.profiles_dir,
+                                    notify=print)
+    except (KeyboardInterrupt, EOFError):
+        raise SystemExit("\nCancelled. Nothing was written.")
+
+    print(f"\nWrote {path}")
+    print("\nNext:")
+    print(f"  python sponsorscan.py doctor --profile {path}")
+    print(f"  python sponsor_daily_report.py --profile {path}")
+
+
+# ---------------------------------------------------------------------- doctor
+
+def cmd_doctor(args):
+    """Report which pipeline stage needs attention.
+
+    The checks live in onboarding.py as pure functions; this only supplies the
+    paths, the environment and the date, then prints and sets the exit code.
+    """
+    import datetime
+
+    import onboarding
+
+    results = onboarding.run_checks(
+        db_path=args.db or DB_PATH,
+        companies_path=args.companies,
+        profile_path=args.profile,
+        env=os.environ,
+        today=datetime.date.today())
+
+    print(onboarding.format_results(results))
+    raise SystemExit(onboarding.exit_code(results))
+
+
 # ------------------------------------------------------------------------ main
 
 def main():
@@ -768,7 +1297,11 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
 
     a = sub.add_parser("load-lca", help="Load DOL LCA disclosure file into SQLite")
-    a.add_argument("path", help="Local .xlsx/.csv path, or an https:// URL")
+    a.add_argument("path", nargs="?", default=None,
+                   help="Local .xlsx/.csv path, or an https:// URL")
+    a.add_argument("--latest", action="store_true",
+                   help="Resolve the newest disclosure file from the DOL site "
+                        "instead of passing a path")
     a.add_argument("--replace", action="store_true", help="Clear existing employer rows first")
     a.set_defaults(func=cmd_load_lca)
 
@@ -776,6 +1309,9 @@ def main():
     b.add_argument("--companies", default="companies.yaml")
     b.add_argument("--replace", action="store_true")
     b.add_argument("--delay", type=float, default=0.4, help="Seconds between boards")
+    b.add_argument("--workday-days", type=int, default=WORKDAY_MAX_AGE_DAYS,
+                   help="Fetch Workday postings up to this many days old "
+                        f"(default {WORKDAY_MAX_AGE_DAYS})")
     b.set_defaults(func=cmd_fetch_jobs)
 
     d = sub.add_parser("discover", help="Build companies.yaml from the DOL employer list")
@@ -791,6 +1327,12 @@ def main():
     d.add_argument("--max-certified", type=int, default=0,
                    help="Skip employers above this many certified LCAs "
                         "(0 = no cap). Use to exclude the handful of mega-filers.")
+    d.add_argument("--workday", action="store_true",
+                   help="Also search Workday boards. Slower: up to one request per "
+                        "Workday data center for each guess")
+    d.add_argument("--workday-min-certified", type=int, default=100,
+                   help="Only search Workday for employers with at least this many "
+                        "certified LCAs (default 100)")
     d.add_argument("--no-merge", dest="merge", action="store_false",
                    help="Overwrite the company list instead of merging into it")
     d.set_defaults(func=cmd_discover, merge=True)
@@ -807,6 +1349,20 @@ def main():
                    help="Drop employers with no certified LCAs on record")
     c.add_argument("--fuzzy-cutoff", type=int, default=90)
     c.set_defaults(func=cmd_report)
+
+    st = sub.add_parser("setup", help="Answer a few questions to write a profile")
+    st.add_argument("--profiles-dir", default="profiles",
+                    help="Directory the profile is written to")
+    st.set_defaults(func=cmd_setup)
+
+    doc = sub.add_parser("doctor",
+                         help="Check each pipeline stage and report what to fix")
+    doc.add_argument("--profile", default=None,
+                     help="Profile to validate; omitted skips the profile checks")
+    doc.add_argument("--companies", default="companies.yaml")
+    doc.add_argument("--db", default=None,
+                     help="Database to inspect; defaults to SPONSORSCAN_DB or ./sponsorscan.db")
+    doc.set_defaults(func=cmd_doctor)
 
     args = p.parse_args()
     args.func(args)

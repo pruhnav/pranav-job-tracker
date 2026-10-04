@@ -1,12 +1,14 @@
 import csv
 import os
 import smtplib
+import sqlite3
 import sys
 from email.message import EmailMessage
 from pathlib import Path
 
 
 CSV_FILE = Path("todays_new_jobs_48h.csv")
+DB_FILE = Path("sponsorscan.db")
 
 
 def count_new_jobs() -> int:
@@ -18,6 +20,32 @@ def count_new_jobs() -> int:
 
     # Subtract the CSV header.
     return max(len(rows) - 1, 0)
+
+
+def load_failures() -> list[tuple[str, str]]:
+    """Boards the last fetch-jobs run could not read, as (board, error)."""
+    if not DB_FILE.exists():
+        return []
+    con = sqlite3.connect(DB_FILE)
+    try:
+        return [tuple(row) for row in con.execute(
+            "SELECT board, error FROM fetch_failures ORDER BY board")]
+    except sqlite3.OperationalError:
+        return []  # a database from before failures were recorded
+    finally:
+        con.close()
+
+
+def failures_text(failures: list[tuple[str, str]]) -> str:
+    if not failures:
+        return ""
+    lines = [
+        f"{len(failures)} job board{'s' if len(failures) != 1 else ''} "
+        "failed to fetch, so their postings are missing. "
+        "A persistent failure usually means a wrong slug in companies.yaml:"
+    ]
+    lines.extend(f"  - {board}: {error}" for board, error in failures)
+    return "\n" + "\n".join(lines) + "\n"
 
 
 def main() -> None:
@@ -54,7 +82,7 @@ def main() -> None:
 Your Google Sheet has been updated.
 
 The new-jobs CSV is attached to this email.
-"""
+{failures_text(load_failures())}"""
     )
 
     with CSV_FILE.open("rb") as attachment:

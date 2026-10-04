@@ -257,7 +257,7 @@ companies:
   - slug: openai
     name: OpenAI
   - slug: ramp
-    name: Ashby
+    name: Ramp Business Corporation
   - slug: notion
     name: Notion Labs
   - slug: linear
@@ -314,3 +314,45 @@ companies:
     name: Vanta Inc.
   - slug: uipath
     name: UiPath, Inc.
+
+  # Large employers, which file most LCAs, post on Workday. The slug is
+  # tenant/wdN/site from the careers URL, e.g.
+  # adobe.wd5.myworkdayjobs.com/external_experienced -> adobe/wd5/external_experienced.
+  # Fetching reads every listing but only opens postings from the last few
+  # days; see --workday-days. discover cannot guess these, so add them by hand.
+  workday:
+  - slug: nvidia/wd5/NVIDIAExternalCareerSite
+    name: NVIDIA
+  - slug: adobe/wd5/external_experienced
+    name: Adobe
+  - slug: salesforce/wd12/External_Career_Site
+    name: Salesforce
+  - slug: intel/wd1/External
+    name: Intel
+  - slug: capitalone/wd12/Capital_One
+    name: Capital One Services
+  - slug: workday/wd5/Workday
+    name: Workday
+  - slug: mastercard/wd1/CorporateCareers
+    name: Mastercard International
+  - slug: paypal/wd1/jobs
+    name: PayPal
+  - slug: micron/wd1/External
+    name: Micron Technology
+  - slug: broadcom/wd1/External_Career
+    name: Broadcom
+  - slug: autodesk/wd1/Ext
+    name: Autodesk
+  - slug: hp/wd5/ExternalCareerSite
+    name: HP
+  - slug: cisco/wd5/cisco_careers
+    name: Cisco Systems
+
+# Curated lists that name many employers each. Each entry is owner/repo/path of
+# a markdown file on GitHub. They have no job descriptions, so their postings
+# are scored on the title alone, and a company whose own board is listed above
+# keeps the board's copy. Only the new grad list is followed; add
+# speedyapply/2027-SWE-College-Jobs/README.md for USA internships.
+feeds:
+  speedyapply:
+  - speedyapply/2027-SWE-College-Jobs/NEW_GRAD_USA.md
