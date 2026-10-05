@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-05T15:52:28.617275+00:00",
+  "generated_at_utc": "2026-10-05T22:32:32.204476+00:00",
   "seen": {
     "greenhouse:affirm:8008645003": "2026-10-04",
     "greenhouse:affirm:8011590003": "2026-10-04",
     "greenhouse:instacart:8249894": "2026-10-04",
+    "greenhouse:nuro:8248317": "2026-10-05",
     "greenhouse:pinterest:7838577": "2026-10-04",
     "greenhouse:pinterest:7838591": "2026-10-04",
     "greenhouse:pinterest:8140219": "2026-10-04",
@@ -32,6 +33,11 @@
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000153279380-software-engineer-core-infrastructure-moveworks-new-grad-": "2026-10-05",
     "speedyapply:leidos.wd5.myworkdayjobs.com/en-US/external/job/Gaithersburg-MD/Cloud-Infrastructure-Engineer_R-00193640": "2026-10-04",
     "speedyapply:leidos.wd5.myworkdayjobs.com/en-US/external/job/Lawton-OK/Junior-CEMA-Software-Engineer_R-00193576": "2026-10-05",
+    "workday:broadcom/wd1/External_Career:R026980": "2026-10-05",
+    "workday:capitalone/wd12/Capital_One:R1000592": "2026-10-05",
+    "workday:cisco/wd5/cisco_careers:2022318": "2026-10-05",
+    "workday:mastercard/wd1/CorporateCareers:R-291661": "2026-10-05",
+    "workday:netflix/wd108/netflix:AJRT30201": "2026-10-05",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04"
   }
 }
