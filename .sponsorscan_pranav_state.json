@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-06T18:59:57.450359+00:00",
+  "generated_at_utc": "2026-10-06T23:05:03.355896+00:00",
   "seen": {
     "ashby:sierra:b8666a78-fcb1-47bb-ad07-5edb6cd3ad71": "2026-10-06",
     "ashby:sierra:ddae4a0c-2f6c-4cc3-80aa-da74a0dd667a": "2026-10-06",
     "greenhouse:affirm:8008645003": "2026-10-04",
+    "greenhouse:affirm:8008649003": "2026-10-06",
+    "greenhouse:affirm:8010617003": "2026-10-06",
     "greenhouse:affirm:8011590003": "2026-10-04",
+    "greenhouse:block:5427849008": "2026-10-06",
     "greenhouse:instacart:8249894": "2026-10-04",
     "greenhouse:nuro:8248317": "2026-10-06",
     "greenhouse:pinterest:7838577": "2026-10-04",
@@ -26,6 +29,7 @@
     "greenhouse:roku:8188704": "2026-10-06",
     "greenhouse:rubrik:8243737": "2026-10-06",
     "greenhouse:stripe:8249901": "2026-10-04",
+    "greenhouse:waymo:8257660": "2026-10-06",
     "speedyapply:apply.careers.microsoft.com/careers/job/1970393556982925": "2026-10-06",
     "speedyapply:apply.careers.microsoft.com/careers/job/1970393556989020": "2026-10-04",
     "speedyapply:apply.careers.microsoft.com/careers/job/1970393557004814": "2026-10-05",
@@ -49,6 +53,7 @@
     "workday:capitalone/wd12/Capital_One:R1000592": "2026-10-06",
     "workday:cisco/wd5/cisco_careers:2022318": "2026-10-06",
     "workday:mastercard/wd1/CorporateCareers:R-291661": "2026-10-06",
+    "workday:micron/wd1/External:JR114339": "2026-10-06",
     "workday:netflix/wd108/netflix:AJRT30201": "2026-10-06",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04"
   }
