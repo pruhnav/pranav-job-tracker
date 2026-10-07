@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-07T02:21:37.174150+00:00",
+  "generated_at_utc": "2026-10-07T10:11:51.675130+00:00",
   "seen": {
     "ashby:sierra:b8666a78-fcb1-47bb-ad07-5edb6cd3ad71": "2026-10-07",
     "ashby:sierra:ddae4a0c-2f6c-4cc3-80aa-da74a0dd667a": "2026-10-07",
@@ -55,6 +55,8 @@
     "workday:mastercard/wd1/CorporateCareers:R-291661": "2026-10-07",
     "workday:micron/wd1/External:JR114339": "2026-10-07",
     "workday:netflix/wd108/netflix:AJRT30201": "2026-10-07",
+    "workday:netflix/wd108/netflix:JR40552": "2026-10-07",
+    "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2025458": "2026-10-07",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04"
   }
 }
