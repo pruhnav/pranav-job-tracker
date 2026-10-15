@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-15T17:51:18.338069+00:00",
+  "generated_at_utc": "2026-10-15T21:19:37.358658+00:00",
   "seen": {
     "ashby:sierra:9d59c96e-e7f7-43cc-8069-bcdf3798fe2b": "2026-10-09",
     "ashby:sierra:b8666a78-fcb1-47bb-ad07-5edb6cd3ad71": "2026-10-07",
@@ -119,6 +119,7 @@
     "speedyapply:www.ixl.com/company/jobs": "2026-10-11",
     "workday:broadcom/wd1/External_Career:R026980": "2026-10-07",
     "workday:capitalone/wd12/Capital_One:R1000592": "2026-10-06",
+    "workday:cisco/wd5/cisco_careers:2022135": "2026-10-15",
     "workday:cisco/wd5/cisco_careers:2022318": "2026-10-07",
     "workday:cisco/wd5/cisco_careers:2028788": "2026-10-15",
     "workday:hp/wd5/ExternalCareerSite:3168475": "2026-10-10",
@@ -131,6 +132,7 @@
     "workday:netflix/wd108/netflix:JR33623": "2026-10-09",
     "workday:netflix/wd108/netflix:JR39787": "2026-10-09",
     "workday:netflix/wd108/netflix:JR40552": "2026-10-08",
+    "workday:netflix/wd108/netflix:JR42332": "2026-10-15",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2025458": "2026-10-08",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2027431": "2026-10-11",
     "workday:paypal/wd1/jobs:R0138333": "2026-10-09",
