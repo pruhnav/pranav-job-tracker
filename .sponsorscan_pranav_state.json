@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-16T20:56:51.495371+00:00",
+  "generated_at_utc": "2026-10-16T23:30:50.313071+00:00",
   "seen": {
     "ashby:sierra:9d59c96e-e7f7-43cc-8069-bcdf3798fe2b": "2026-10-09",
     "ashby:sierra:b8666a78-fcb1-47bb-ad07-5edb6cd3ad71": "2026-10-07",
@@ -152,6 +152,7 @@
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2025458": "2026-10-08",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2027431": "2026-10-11",
     "workday:paypal/wd1/jobs:R0138333": "2026-10-09",
-    "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04"
+    "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04",
+    "workday:workday/wd5/Workday:JR-0109828": "2026-10-16"
   }
 }
