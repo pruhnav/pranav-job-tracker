@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-20T18:00:02.847681+00:00",
+  "generated_at_utc": "2026-10-20T21:35:34.068404+00:00",
   "seen": {
     "ashby:openai:3b34eb10-25b0-4a97-bd6d-05fc90ad4981": "2026-10-18",
     "ashby:openai:dbe79b89-e593-44b3-8aec-c667f7134445": "2026-10-18",
@@ -147,6 +147,7 @@
     "speedyapply:www.braincorp.com/open-positions": "2026-10-12",
     "speedyapply:www.ixl.com/company/jobs": "2026-10-11",
     "workday:adobe/wd5/external_experienced:R173000": "2026-10-20",
+    "workday:adobe/wd5/external_experienced:R173001": "2026-10-20",
     "workday:broadcom/wd1/External_Career:R026980": "2026-10-20",
     "workday:capitalone/wd12/Capital_One:R1000592": "2026-10-06",
     "workday:cisco/wd5/cisco_careers:2022135": "2026-10-17",
@@ -160,6 +161,7 @@
     "workday:mastercard/wd1/CorporateCareers:R-292618": "2026-10-09",
     "workday:micron/wd1/External:JR109306": "2026-10-16",
     "workday:micron/wd1/External:JR113941": "2026-10-11",
+    "workday:micron/wd1/External:JR114094": "2026-10-20",
     "workday:micron/wd1/External:JR114339": "2026-10-09",
     "workday:netflix/wd108/netflix:AJRT30201": "2026-10-20",
     "workday:netflix/wd108/netflix:JR33623": "2026-10-18",
