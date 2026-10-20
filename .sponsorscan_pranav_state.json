@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-20T00:17:03.866054+00:00",
+  "generated_at_utc": "2026-10-20T05:54:27.435972+00:00",
   "seen": {
     "ashby:openai:3b34eb10-25b0-4a97-bd6d-05fc90ad4981": "2026-10-18",
     "ashby:openai:dbe79b89-e593-44b3-8aec-c667f7134445": "2026-10-18",
@@ -144,6 +144,7 @@
     "workday:cisco/wd5/cisco_careers:2028788": "2026-10-16",
     "workday:hp/wd5/ExternalCareerSite:3168475": "2026-10-10",
     "workday:hp/wd5/ExternalCareerSite:UNI4485": "2026-10-20",
+    "workday:intel/wd1/External:JR0286980": "2026-10-20",
     "workday:mastercard/wd1/CorporateCareers:R-291661": "2026-10-07",
     "workday:mastercard/wd1/CorporateCareers:R-292618": "2026-10-09",
     "workday:micron/wd1/External:JR109306": "2026-10-16",
