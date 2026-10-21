@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-21T00:36:19.441648+00:00",
+  "generated_at_utc": "2026-10-21T05:58:35.684344+00:00",
   "seen": {
     "ashby:openai:3b34eb10-25b0-4a97-bd6d-05fc90ad4981": "2026-10-18",
     "ashby:openai:dbe79b89-e593-44b3-8aec-c667f7134445": "2026-10-18",
@@ -43,6 +43,7 @@
     "greenhouse:stripe:8249901": "2026-10-04",
     "greenhouse:waymo:8257660": "2026-10-08",
     "greenhouse:waymo:8286842": "2026-10-20",
+    "greenhouse:xai:5270340007": "2026-10-21",
     "lever:palantir:1b690123-1766-4e75-a0ef-0f58afa864b4": "2026-10-09",
     "lever:veeva:7d78e2b9-7916-4d30-b1e4-3ecfb41206e2": "2026-10-15",
     "speedyapply:amat.wd1.myworkdayjobs.com/en-US/external/job/Santa-ClaraCA/New-College-Grad-Software-Development-Engineer--Bachelors---Santa-Clara--CA-_R2628997": "2026-10-10",
@@ -148,7 +149,7 @@
     "speedyapply:www.ixl.com/company/jobs": "2026-10-11",
     "workday:adobe/wd5/external_experienced:R173000": "2026-10-21",
     "workday:adobe/wd5/external_experienced:R173001": "2026-10-21",
-    "workday:broadcom/wd1/External_Career:R026980": "2026-10-20",
+    "workday:broadcom/wd1/External_Career:R026980": "2026-10-21",
     "workday:capitalone/wd12/Capital_One:R1000592": "2026-10-06",
     "workday:cisco/wd5/cisco_careers:2022135": "2026-10-17",
     "workday:cisco/wd5/cisco_careers:2022318": "2026-10-07",
@@ -176,6 +177,7 @@
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2027431": "2026-10-11",
     "workday:paypal/wd1/jobs:R0138333": "2026-10-09",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04",
+    "workday:salesforce/wd12/External_Career_Site:JR361238": "2026-10-21",
     "workday:workday/wd5/Workday:JR-0109828": "2026-10-18"
   }
 }
