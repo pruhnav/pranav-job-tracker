@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-22T00:40:38.192440+00:00",
+  "generated_at_utc": "2026-10-22T06:03:17.320193+00:00",
   "seen": {
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
     "ashby:openai:3b34eb10-25b0-4a97-bd6d-05fc90ad4981": "2026-10-18",
     "ashby:openai:dbe79b89-e593-44b3-8aec-c667f7134445": "2026-10-18",
+    "ashby:sierra:0dfe7805-aa81-4b8c-88e0-f93a7f80ecee": "2026-10-22",
     "ashby:sierra:9d59c96e-e7f7-43cc-8069-bcdf3798fe2b": "2026-10-09",
     "ashby:sierra:b8666a78-fcb1-47bb-ad07-5edb6cd3ad71": "2026-10-07",
     "ashby:sierra:ddae4a0c-2f6c-4cc3-80aa-da74a0dd667a": "2026-10-07",
