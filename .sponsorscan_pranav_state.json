@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-23T17:59:03.409895+00:00",
+  "generated_at_utc": "2026-10-23T21:25:28.313869+00:00",
   "seen": {
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
     "ashby:openai:3b34eb10-25b0-4a97-bd6d-05fc90ad4981": "2026-10-18",
@@ -39,6 +39,7 @@
     "greenhouse:roblox:8168881": "2026-10-04",
     "greenhouse:roblox:8171506": "2026-10-04",
     "greenhouse:roblox:8229705": "2026-10-08",
+    "greenhouse:roblox:8261393": "2026-10-23",
     "greenhouse:roblox:8262223": "2026-10-11",
     "greenhouse:roku:8158015": "2026-10-04",
     "greenhouse:roku:8188704": "2026-10-07",
