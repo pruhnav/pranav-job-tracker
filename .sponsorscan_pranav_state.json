@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-26T19:13:23.101185+00:00",
+  "generated_at_utc": "2026-10-26T23:46:45.782906+00:00",
   "seen": {
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
@@ -237,6 +237,6 @@
     "workday:paypal/wd1/jobs:R0138333": "2026-10-09",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04",
     "workday:salesforce/wd12/External_Career_Site:JR361238": "2026-10-22",
-    "workday:workday/wd5/Workday:JR-0109828": "2026-10-18"
+    "workday:workday/wd5/Workday:JR-0109828": "2026-10-26"
   }
 }
