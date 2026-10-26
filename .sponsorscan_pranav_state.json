@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-26T10:59:33.597427+00:00",
+  "generated_at_utc": "2026-10-26T19:13:23.101185+00:00",
   "seen": {
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
@@ -41,6 +41,7 @@
     "greenhouse:roblox:8168881": "2026-10-04",
     "greenhouse:roblox:8171506": "2026-10-04",
     "greenhouse:roblox:8229705": "2026-10-08",
+    "greenhouse:roblox:8259453": "2026-10-26",
     "greenhouse:roblox:8261393": "2026-10-25",
     "greenhouse:roblox:8262223": "2026-10-11",
     "greenhouse:roku:8158015": "2026-10-04",
@@ -232,6 +233,7 @@
     "workday:netflix/wd108/netflix:JR42989": "2026-10-21",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2025458": "2026-10-08",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2027431": "2026-10-11",
+    "workday:paypal/wd1/jobs:R0138295": "2026-10-26",
     "workday:paypal/wd1/jobs:R0138333": "2026-10-09",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04",
     "workday:salesforce/wd12/External_Career_Site:JR361238": "2026-10-22",
