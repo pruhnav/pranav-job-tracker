@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-26T23:46:45.782906+00:00",
+  "generated_at_utc": "2026-10-27T04:38:56.666496+00:00",
   "seen": {
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
@@ -41,7 +41,7 @@
     "greenhouse:roblox:8168881": "2026-10-04",
     "greenhouse:roblox:8171506": "2026-10-04",
     "greenhouse:roblox:8229705": "2026-10-08",
-    "greenhouse:roblox:8259453": "2026-10-26",
+    "greenhouse:roblox:8259453": "2026-10-27",
     "greenhouse:roblox:8261393": "2026-10-25",
     "greenhouse:roblox:8262223": "2026-10-11",
     "greenhouse:roku:8158015": "2026-10-04",
@@ -162,7 +162,7 @@
     "speedyapply:jobs.lever.co/shieldai/79c3b65f-ce0c-4868-bedf-4ddcc4cfe583": "2026-10-10",
     "speedyapply:jobs.smartrecruiters.com/Cricut/744000155306769-firmware-engineer": "2026-10-16",
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000153279380-software-engineer-core-infrastructure-moveworks-new-grad-": "2026-10-06",
-    "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000157571919-associate-software-engineer": "2026-10-26",
+    "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000157571919-associate-software-engineer": "2026-10-27",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/ur/job/Ann-Arbor-MI/High-Performance-Compute--HPC--Software-Engineer---HPC-SW-Systems_2636307-3": "2026-10-08",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/ur/job/Ann-Arbor-MI/Software-Engineer---Embedded-Software-Firmware-Development---Embedded-Image-Processing--_2636711": "2026-10-16",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/ur/job/Milpitas-CA/Software-Engineer--High-Performance-Distributed-Computing-_2641774": "2026-10-16",
@@ -233,10 +233,10 @@
     "workday:netflix/wd108/netflix:JR42989": "2026-10-21",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2025458": "2026-10-08",
     "workday:nvidia/wd5/NVIDIAExternalCareerSite:JR2027431": "2026-10-11",
-    "workday:paypal/wd1/jobs:R0138295": "2026-10-26",
+    "workday:paypal/wd1/jobs:R0138295": "2026-10-27",
     "workday:paypal/wd1/jobs:R0138333": "2026-10-09",
     "workday:salesforce/wd12/External_Career_Site:JR359620": "2026-10-04",
     "workday:salesforce/wd12/External_Career_Site:JR361238": "2026-10-22",
-    "workday:workday/wd5/Workday:JR-0109828": "2026-10-26"
+    "workday:workday/wd5/Workday:JR-0109828": "2026-10-27"
   }
 }
