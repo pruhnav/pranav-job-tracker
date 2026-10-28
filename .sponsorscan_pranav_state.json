@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-10-28T18:53:23.015526+00:00",
+  "generated_at_utc": "2026-10-28T23:10:24.524105+00:00",
   "seen": {
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
@@ -47,6 +47,7 @@
     "greenhouse:roku:8158015": "2026-10-04",
     "greenhouse:roku:8188704": "2026-10-07",
     "greenhouse:rubrik:8243737": "2026-10-08",
+    "greenhouse:rubrik:8267709": "2026-10-28",
     "greenhouse:stripe:8249901": "2026-10-04",
     "greenhouse:stripe:8314283": "2026-10-24",
     "greenhouse:waymo:8257660": "2026-10-08",
@@ -194,6 +195,7 @@
     "speedyapply:motorolasolutions.wd5.myworkdayjobs.com/en-US/careers/job/Allen-TX-TX139/Embedded-Software-Engineer_R68965-1": "2026-10-24",
     "speedyapply:motorolasolutions.wd5.myworkdayjobs.com/en-US/careers/job/Schaumburg-IL/Software-Engineer_R69235": "2026-10-25",
     "speedyapply:omegahires.applytojob.com/apply/LM0EItNDBg/Python-Full-Stack-Developer-Azure-AI-Angular-React-Python": "2026-10-15",
+    "speedyapply:paypal.wd1.myworkdayjobs.com/en-US/jobs/job/San-Jose-California-United-States-of-America/Software-Engineer_R0138295-1": "2026-10-28",
     "speedyapply:rbc.wd3.myworkdayjobs.com/en-US/externalprivatepostingstudents/job/Jersey-City-New-Jersey-United-States-of-America/XMLNAME-2027-Summer--Technology---Operations--Enterprise-Logging-Team--Junior-Cloud-Developer_R-0000188114": "2026-10-23",
     "speedyapply:redhat.wd5.myworkdayjobs.com/en-US/jobs/job/Raleigh/Associate-Software-Engineer_R-059573": "2026-10-08",
     "speedyapply:remitly.wd5.myworkdayjobs.com/en-US/remitly_careers/job/Arlington-Virginia-United-States/Fullstack-Software-Development-Engineer-I--Card_R_106624": "2026-10-25",
