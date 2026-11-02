@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-11-02T10:53:07.133585+00:00",
+  "generated_at_utc": "2026-11-02T22:21:30.736751+00:00",
   "seen": {
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-10-22",
@@ -29,6 +29,8 @@
     "greenhouse:pinterest:8140389": "2026-10-04",
     "greenhouse:purestorage:8249851": "2026-10-08",
     "greenhouse:purestorage:8282746": "2026-10-23",
+    "greenhouse:qualtrics:8325652": "2026-11-02",
+    "greenhouse:qualtrics:8334245": "2026-11-02",
     "greenhouse:reddit:8250125": "2026-10-04",
     "greenhouse:reddit:8263406": "2026-10-09",
     "greenhouse:reddit:8319655": "2026-10-26",
@@ -49,6 +51,7 @@
     "greenhouse:roku:8188704": "2026-10-07",
     "greenhouse:rubrik:8243737": "2026-10-08",
     "greenhouse:rubrik:8267709": "2026-10-30",
+    "greenhouse:smartsheet:8347710": "2026-11-02",
     "greenhouse:stripe:8249901": "2026-10-04",
     "greenhouse:stripe:8314283": "2026-10-24",
     "greenhouse:stripe:8332718": "2026-10-30",
@@ -253,6 +256,7 @@
     "workday:cisco/wd5/cisco_careers:2026049": "2026-10-25",
     "workday:cisco/wd5/cisco_careers:2026306": "2026-10-23",
     "workday:cisco/wd5/cisco_careers:2026803": "2026-10-23",
+    "workday:cisco/wd5/cisco_careers:2028277": "2026-11-02",
     "workday:cisco/wd5/cisco_careers:2028788": "2026-10-16",
     "workday:cisco/wd5/cisco_careers:2029701": "2026-10-25",
     "workday:hp/wd5/ExternalCareerSite:3168475": "2026-10-10",
