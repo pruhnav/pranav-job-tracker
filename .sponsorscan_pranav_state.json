@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-11-08T10:07:46.968569+00:00",
+  "generated_at_utc": "2026-11-08T18:21:54.313086+00:00",
   "seen": {
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
     "ashby:cerebras:c6f607ce-306c-4deb-8825-4175201a7cd4": "2026-11-06",
@@ -146,6 +146,7 @@
     "speedyapply:c3.ai/job-description/8879453002": "2026-10-11",
     "speedyapply:ca-careers-rivian.icims.com/jobs/34249/software-engineer/job": "2026-10-24",
     "speedyapply:career-schwab.icims.com/jobs/127949/associate-software-engineer/job": "2026-10-29",
+    "speedyapply:career-schwab.icims.com/jobs/129410/jr.-software-developer/job": "2026-11-08",
     "speedyapply:careers-cadmusgroup.icims.com/jobs/3254/jr.-full-stack-developer/job": "2026-10-29",
     "speedyapply:careers-cadmusgroup.icims.com/jobs/3255/jr.-full-stack-developer/job": "2026-10-31",
     "speedyapply:careers-cotiviti.icims.com/jobs/20757/associate-software-engineer/job": "2026-10-26",
@@ -186,6 +187,7 @@
     "speedyapply:icf.wd5.myworkdayjobs.com/en-US/icfexternal_career_site/job/Reston-VA/Seasonal-Associate--Full-Stack-Developer--Remote-_R2603570": "2026-10-24",
     "speedyapply:icf.wd5.myworkdayjobs.com/en-US/icfexternal_career_site/job/Reston-VA/Seasonal-Associate--Full-Stack-Developer--Remote-_R2603571": "2026-10-24",
     "speedyapply:invenergyllc.wd1.myworkdayjobs.com/en-US/invenergycareers/job/Chicago-IL/Platform-Developer-I--Business-Applications_R11317-1": "2026-10-24",
+    "speedyapply:isu.wd1.myworkdayjobs.com/en-US/iowastatejobs/job/Ames-IA/Software-Developer-I_R20057": "2026-11-08",
     "speedyapply:itron.wd5.myworkdayjobs.com/en-US/early_careers/job/United-States-of-America-Washington-Liberty-Lake/Software-Quality-Assurance-Engineer_JR102923": "2026-10-25",
     "speedyapply:itron.wd5.myworkdayjobs.com/en-US/itron/job/United-States-of-America-Washington-Liberty-Lake/Software-Quality-Assurance-Engineer_JR102923-1": "2026-10-25",
     "speedyapply:jci.wd5.myworkdayjobs.com/en-US/jci/job/Westford-Massachusetts-United-States-of-America/Linux-Firmware-Engineer_WD30281374": "2026-10-18",
@@ -220,6 +222,7 @@
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000153279380-software-engineer-core-infrastructure-moveworks-new-grad-": "2026-10-06",
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000157571919-associate-software-engineer": "2026-10-27",
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000159509479-software-engineer-agent-eval-platform": "2026-11-07",
+    "speedyapply:jobs.smartrecruiters.com/Wavestone1/744000160277010-ai-full-stack-engineer": "2026-11-08",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/search/job/Milpitas-CA/Software-Engineer_2642339-1": "2026-11-05",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/search/job/Milpitas-CA/System-Software-Engineer---Distributed-Computing_2642720-1": "2026-11-01",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/ur/job/Ann-Arbor-MI/High-Performance-Compute--HPC--Software-Engineer---HPC-SW-Systems_2636307-3": "2026-10-08",
