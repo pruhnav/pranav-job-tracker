@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-11-23T10:34:05.312524+00:00",
+  "generated_at_utc": "2026-11-24T00:42:13.561640+00:00",
   "seen": {
     "ashby:1x:0ac33259-1b12-447c-95a3-d2d0c6b1a996": "2026-11-12",
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
@@ -65,6 +65,7 @@
     "greenhouse:roblox:8325759": "2026-11-05",
     "greenhouse:roblox:8356764": "2026-11-12",
     "greenhouse:roblox:8386848": "2026-11-19",
+    "greenhouse:roblox:8395051": "2026-11-24",
     "greenhouse:roku:8158015": "2026-10-04",
     "greenhouse:roku:8188704": "2026-10-07",
     "greenhouse:rubrik:8243737": "2026-10-08",
@@ -75,6 +76,7 @@
     "greenhouse:stripe:8314283": "2026-10-24",
     "greenhouse:stripe:8332718": "2026-10-30",
     "greenhouse:stripe:8384287": "2026-11-14",
+    "greenhouse:stripe:8411927": "2026-11-24",
     "greenhouse:twilio:8385593": "2026-11-20",
     "greenhouse:verkada:5283644007": "2026-11-07",
     "greenhouse:waymo:8257660": "2026-10-08",
@@ -277,7 +279,7 @@
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000157571919-associate-software-engineer": "2026-10-27",
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000159509479-software-engineer-agent-eval-platform": "2026-11-07",
     "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000162190099-software-engineer-agentic-systems-moveworks": "2026-11-21",
-    "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000162837679-assoc-software-engineer": "2026-11-23",
+    "speedyapply:jobs.smartrecruiters.com/ServiceNow/744000162837679-assoc-software-engineer": "2026-11-24",
     "speedyapply:jobs.smartrecruiters.com/Wavestone1/744000160277010-ai-full-stack-engineer": "2026-11-09",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/search/job/Milpitas-CA/Software-Engineer_2642339-1": "2026-11-05",
     "speedyapply:kla.wd1.myworkdayjobs.com/en-US/search/job/Milpitas-CA/System-Software-Engineer---Distributed-Computing_2642720-1": "2026-11-01",
