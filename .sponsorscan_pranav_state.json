@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at_utc": "2026-11-27T14:52:24.844399+00:00",
+  "generated_at_utc": "2026-11-27T23:20:21.272929+00:00",
   "seen": {
     "ashby:1x:0ac33259-1b12-447c-95a3-d2d0c6b1a996": "2026-11-12",
     "ashby:1x:6d41e7c8-75c3-4f54-8a76-5abbb3569341": "2026-10-25",
@@ -82,6 +82,9 @@
     "greenhouse:stripe:8384287": "2026-11-14",
     "greenhouse:stripe:8411927": "2026-11-25",
     "greenhouse:stripe:8414532": "2026-11-26",
+    "greenhouse:stripe:8421000": "2026-11-27",
+    "greenhouse:stripe:8421367": "2026-11-27",
+    "greenhouse:stripe:8421387": "2026-11-27",
     "greenhouse:twilio:8385593": "2026-11-20",
     "greenhouse:verkada:5283644007": "2026-11-07",
     "greenhouse:waymo:8257660": "2026-10-08",
